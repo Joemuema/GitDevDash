@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { ThemeProvider } from "@/components/theme-provider"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { FavoritesProvider } from "@/components/favorites/favorites-provider"
 import { getCurrentUser } from "@/lib/auth/dal"
 import { cn } from "@/lib/utils";
@@ -40,9 +41,11 @@ export default async function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <FavoritesProvider>
-            <AuthProvider user={user}>{children}</AuthProvider>
-          </FavoritesProvider>
+          <TooltipProvider>
+            <FavoritesProvider>
+              <AuthProvider user={user}>{children}</AuthProvider>
+            </FavoritesProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

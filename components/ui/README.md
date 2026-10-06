@@ -7,6 +7,8 @@ for carousel, `@hugeicons/react` for icons) and styled via `cn()`
 
 - `Button` uses `render={<Link>}` + `nativeButton={!render}` (never
   `asChild`) — Base UI injects native-button semantics otherwise.
+- `Tooltip` needs `TooltipProvider` in the tree; it is mounted once in
+  `app/layout.tsx`.
 - `DropdownMenuLabel` must sit inside `DropdownMenuGroup` (or a radio
   group); bare labels throw at runtime.
 - `Questionnaire.Progress` must render inside `<Questionnaire>` (the Root).
