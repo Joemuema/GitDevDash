@@ -80,6 +80,7 @@
     --sidebar-ring: oklch(0.711 0.019 323.02);
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0.008 326);
+    --circuit-opacity: 0.05;
 }
 
 .dark {
@@ -114,6 +115,7 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.542 0.034 322.5);
+    --circuit-opacity: 0.04;
 }
 
 @layer base {
@@ -127,3 +129,23 @@
     @apply font-sans;
     }
 }
+
+/*
+ * Circuit-board backdrop (Hero Patterns "Circuit Board" artwork, stored as
+ * `public/circuit-board.svg`).
+ *
+ * The artwork is applied as a *mask* so the stroke can be painted with
+ * `var(--foreground)`. One asset therefore serves both themes, and the strength
+ * is tuned per theme via `--circuit-opacity`. The tile is 304x304, matching the
+ * artwork's own viewBox, so it repeats evenly at its natural scale.
+ */
+.circuit-backdrop {
+    background-color: var(--foreground);
+    opacity: var(--circuit-opacity);
+    -webkit-mask-image: url("/circuit-board.svg");
+    mask-image: url("/circuit-board.svg");
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    -webkit-mask-size: 456px 456px;
+    mask-size: 456px 456px;
+  }

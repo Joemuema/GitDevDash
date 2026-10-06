@@ -5,8 +5,14 @@ footer and spacing containers.
 
 ## Files
 
-- `app-shell.tsx` — `SidebarProvider` + `AppSidebar` + `SidebarInset`
-  + `OnboardingGate`. The single layout primitive for `(app)/layout.tsx`.
+- `app-shell.tsx` — `SidebarProvider` + `PageBackdrop` + `AppSidebar`
+  + `SidebarInset` + `OnboardingGate`. The single layout primitive for
+  `(app)/layout.tsx`. `SidebarInset` is given `bg-transparent` so the backdrop
+  shows through (the primitive defaults to `bg-background`, which would occlude
+  it — see `app/README.md` → *Backdrops*).
+- `page-backdrop.tsx` — Fixed circuit-board backdrop behind every page except
+  home, where the home page supplies its own `FlickeringGrid`. Client Component
+  because the choice is made from `usePathname()`.
 - `app-sidebar.tsx` — Sidebar nav: brand, Browse group (home/search with
   active state + favorites `SidebarMenuBadge`), Workspace group,
   `SidebarRail`, icon-collapse tooltips.

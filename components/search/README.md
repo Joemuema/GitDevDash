@@ -6,6 +6,8 @@ filter chips, cards, sort and pagination.
 ## Files
 
 - `search-hero.tsx` / `home-guidance.tsx` — Home (`/`) hero and usage tips.
+- `home-flicker.tsx` — Home-only animated `FlickeringGrid` backdrop panel
+  (Magic UI). Theme-aware, since the canvas colour can't be `currentColor`.
 - `search-form.tsx` — Query `InputGroup` + `Collapsible` advanced filters
   (language, location, min repos) + `Popover` + `Calendar` joined-after
   date. Submits via `searchUrl` (`lib/search/params.ts`).
