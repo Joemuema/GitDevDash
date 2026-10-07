@@ -17,8 +17,9 @@ filter chips, cards, sort and pagination.
 - `active-filters.tsx` — Active params as removable `Badge` chips with
   `Tooltip`s + "Clear all".
 - `search-results-list.tsx` / `developer-result-card.tsx` — Result list of
-  cards: avatar, name/login, bio, location, stat badges (repos/followers/
-  following), favorite `Toggle`, "View profile" link with `Tooltip`.
+  `bg-card/75` cards: avatar, name/login, bio, location, stat badges
+  (repos/followers/following), favorite `Toggle`, "View profile" link with
+  `Tooltip`. The 75% opacity lets the circuit backdrop show through faintly.
 - `search-pagination.tsx` — Prev/next page links preserving all params.
 
 ## Connections

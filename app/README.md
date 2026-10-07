@@ -30,11 +30,12 @@ Its strength and scale are tuned in two places in `app/globals.css`:
 | Knob | Where | Value |
 | --- | --- | --- |
 | `--circuit-opacity` | `:root` / `.dark` | `0.05` light, `0.04` dark |
-| `mask-size` | `.circuit-backdrop` | `456px 456px` |
+| `mask-size` | `.circuit-backdrop` | `228px 228px` |
 
-The opacity is deliberately very low and the tile is scaled **up** from the
-artwork's native `304px` — at full opacity and native scale the circuit reads as
-busy line work that competes with page content.
+The opacity is deliberately very low and the tile is scaled **down** to `228px`
+(0.75x the artwork's native `304px`) so the motifs read smaller. At full
+opacity and native scale the circuit reads as busy line work that competes
+with page content.
 
 **Home only — flickering grid.** `components/search/home-flicker.tsx` wraps the
 Magic UI `FlickeringGrid` (installed via `shadcn add @magicui/flickering-grid`
@@ -43,14 +44,19 @@ be a Client Component; it resolves the square colour from the active theme
 because `canvas.fillStyle` does not accept `currentColor`. It lives inside a
 rounded hero panel on `app/(app)/page.tsx` rather than filling the viewport.
 
-### Important: surfaces must be transparent
+### Important: the inset must be transparent
 
 Both backdrops sit *behind* content, so any full-bleed wrapper painted
 `bg-background` will hide them. `SidebarInset` (in `components/ui/sidebar.tsx`)
 defaults to `bg-background`, which is why `app-shell.tsx` passes
 `bg-transparent`. If a new full-page wrapper is added, give it `bg-transparent`
-too. Cards, popovers and the sticky header keep their own opaque backgrounds on
-purpose, so text stays legible.
+too.
+
+Cards and list surfaces sit at 75% (`bg-card/75`) so the backdrop texture shows
+through faintly while text stays legible: the home hero panel
+(`app/(app)/page.tsx`), `DeveloperResultCard`, `RepositoryListItem`, the
+`ReposCarousel` cards, and the dropdown menus (`bg-popover/75`). Popovers and
+the sticky header keep their own opaque backgrounds on purpose.
 
 To change the circuit artwork, replace `public/circuit-board.svg` — it is
 referenced by path, not by content, so nothing else needs editing.

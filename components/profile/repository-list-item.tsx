@@ -20,7 +20,7 @@ export function RepositoryListItem({
   repo: GitHubRepoSummary
 }) {
   return (
-    <Item variant="muted">
+    <Item variant="muted" className="bg-card/75">
       <ItemContent>
         <ItemTitle>
           <Link

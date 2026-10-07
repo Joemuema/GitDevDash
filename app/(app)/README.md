@@ -7,8 +7,9 @@ onboarding gate).
 ## Files
 
 - `layout.tsx` — Thin wrapper: `<AppShell>{children}</AppShell>`.
-- `page.tsx` — Home page (`/`): `SearchHero` + `SearchForm` + `HomeGuidance`.
-  The entry point for starting a developer search.
+- `page.tsx` — Home page (`/`): `SearchHero` + `SearchForm` + `HomeGuidance`
+  inside a `bg-card/75` flickering-grid hero panel. The entry point for
+  starting a developer search.
 
 ## Subfolders
 

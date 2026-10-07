@@ -17,7 +17,7 @@ languages, featured repos carousel and activity analytics.
   sort (recently updated, stars, name).
 - `repos-carousel.tsx` — "Featured repositories": swipeable (`dragFree`)
   `Carousel` of the top-8 `sortReposForFeatured` repos (stars desc, ties by
-  `updatedAt`), each a `Card` with star/fork badges.
+  `updatedAt`), each a `bg-card/75` `Card` with star/fork badges.
 - `dev-analytics.tsx` — "Recent activity" `Card`: pushes `BarChart` over an
   adaptive 1–14 day window plus totals (commits via Search API, pushes, PRs,
   issues). Seeded copy is replaced by `getUserActivitySummary`
