@@ -15,6 +15,10 @@ Server-rendered data, client-rendered interactivity.
 - `match-card.tsx` — Single-developer card: big score, confidence `Badge`,
   per-dimension anatomy bars with `Tooltip` evidence, confidence reasons, and
   the human-decision disclaimer.
+- `tips-panel.tsx` — `Item`-based tips grouped in `Tabs`
+  (Quick wins / Portfolio gaps / For this JD) with count badges, severity
+  badges, and a "View repo" action linking into the repo page. Mounted on
+  the Step 3 developer view and for the top-ranked Step 4 candidate.
 
 ## How it connects
 

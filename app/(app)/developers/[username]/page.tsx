@@ -3,6 +3,7 @@ import { DeveloperBreadcrumb } from "@/components/shared/developer-breadcrumb"
 import { LanguageOverview } from "@/components/profile/language-overview"
 import { JdInput } from "@/components/match/jd-input"
 import { MatchCard } from "@/components/match/match-card"
+import { TipsPanel } from "@/components/match/tips-panel"
 import { PageSection } from "@/components/layout/page-section"
 import { ProfileHeader } from "@/components/profile/profile-header"
 import { RepositoryList } from "@/components/profile/repository-list"
@@ -107,6 +108,14 @@ export default async function DeveloperPage({
         <div className="space-y-4">
           <JdInput defaultText={jd?.text ?? ""} />
           {match ? <MatchCard match={match.match} /> : null}
+          {match ? (
+            <PageSection
+              title="Repo tailoring tips"
+              description="How this developer can tailor their repos for this role — quick wins first."
+            >
+              <TipsPanel login={username} tips={match.match.tips} />
+            </PageSection>
+          ) : null}
         </div>
       </PageSection>
       {repos.length > 0 ? (

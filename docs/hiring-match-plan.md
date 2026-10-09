@@ -12,10 +12,10 @@ resume-upload signals later.
 ## Steps
 
 - [x] **Step 1 — Matching engine (`lib/match/`).** Types, JD parser,
-tree-based stack fingerprints, heuristic `scoreRepo` (+ `RepoScorer` seam),
+      tree-based stack fingerprints, heuristic `scoreRepo` (+ `RepoScorer` seam),
       developer rollup with confidence, tips generator. Pure + documented.
 - [x] **Step 2 — Deep-scan wiring.** `deepScanDeveloper` in
-`lib/match/deep-scan.ts`: one repo list + language overview + activity
+      `lib/match/deep-scan.ts`: one repo list + language overview + activity
       fetch, then per-repo detail → languages + tree in parallel for up to 8
       star-sorted non-forks. Cached clients, per-repo failures degrade into
       `skippedRepos`, stats returned alongside the match.
@@ -24,10 +24,12 @@ tree-based stack fingerprints, heuristic `scoreRepo` (+ `RepoScorer` seam),
       confidence + human-decision disclaimer. Doubles as the Step 4 toggle target.
 - [x] **Step 4 — `/match` batch shortlist.** JD intake, ranked results,
       compare table, human-decision disclaimer.
-- [ ] **Step 5 — Tips panel.** `Item`-based tips grouped in tabs.
+- [x] **Step 5 — Tips panel.** `TipsPanel` (`Item` + `Tabs` + `Badge`)
+  on the Step 3 developer view and for the top-ranked Step 4 candidate.
 - [ ] **Step 6 — Saved JDs, share/export, gating.** Persist JDs, CSV export,
       auth hooks.
 
 ## Current step
 
-**Step 4 DONE** (`/match` page + intake + ranked shortlist table + single-dev toggle links + sidebar nav). Next up: Step 5 (tips panel).
+**Step 5 DONE** (`TipsPanel` on developer page + top batch candidate).
+Next up: Step 6 (saved JDs, share/export, gating).
