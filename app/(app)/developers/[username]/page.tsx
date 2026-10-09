@@ -1,6 +1,8 @@
 import { DevAnalytics } from "@/components/profile/dev-analytics"
 import { DeveloperBreadcrumb } from "@/components/shared/developer-breadcrumb"
 import { LanguageOverview } from "@/components/profile/language-overview"
+import { JdInput } from "@/components/match/jd-input"
+import { MatchCard } from "@/components/match/match-card"
 import { PageSection } from "@/components/layout/page-section"
 import { ProfileHeader } from "@/components/profile/profile-header"
 import { RepositoryList } from "@/components/profile/repository-list"
@@ -11,6 +13,8 @@ import { GitHubApiError } from "@/lib/github/errors"
 import { getUser } from "@/lib/github/users"
 import { getUserLanguageOverview } from "@/lib/github/languages"
 import { listUserRepos, sortReposForFeatured } from "@/lib/github/repos"
+import { deepScanDeveloper } from "@/lib/match/deep-scan"
+import { parseJdParam } from "@/lib/match/jd-param"
 import { routes } from "@/lib/routes"
 import type {
   DevActivity,
@@ -30,6 +34,7 @@ const EMPTY_ACTIVITY: DevActivity = {
 
 type DeveloperPageProps = {
   params: Promise<{ username: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 async function fetchDeveloperData(username: string) {
@@ -59,9 +64,7 @@ async function fetchDeveloperData(username: string) {
   }
 }
 
-async function fetchDeveloperActivity(
-  username: string
-): Promise<DevActivity> {
+async function fetchDeveloperActivity(username: string): Promise<DevActivity> {
   try {
     return await getUserActivity(username)
   } catch {
@@ -70,13 +73,23 @@ async function fetchDeveloperActivity(
   }
 }
 
-export default async function DeveloperPage({ params }: DeveloperPageProps) {
+export default async function DeveloperPage({
+  params,
+  searchParams,
+}: DeveloperPageProps) {
   const { username } = await params
+  const raw = await searchParams
+  const jdRaw = raw.jd
+  const jd = parseJdParam(Array.isArray(jdRaw) ? jdRaw[0] : jdRaw)
   const [{ user, repos, languages, sampledRepoCount }, activity] =
     await Promise.all([
       fetchDeveloperData(username),
       fetchDeveloperActivity(username),
     ])
+
+  const match = jd
+    ? await deepScanDeveloper(username, jd.signal).catch(() => null)
+    : null
 
   return (
     <PageContainer className="space-y-8">
@@ -87,6 +100,15 @@ export default async function DeveloperPage({ params }: DeveloperPageProps) {
         ]}
       />
       <ProfileHeader user={user} />
+      <PageSection
+        title="Job match"
+        description="Paste a job description to score this developer against it. The link is shareable."
+      >
+        <div className="space-y-4">
+          <JdInput defaultText={jd?.text ?? ""} />
+          {match ? <MatchCard match={match.match} /> : null}
+        </div>
+      </PageSection>
       {repos.length > 0 ? (
         <PageSection
           title="Featured repositories"

@@ -26,6 +26,7 @@ import {
   Search01Icon,
   Settings01Icon,
   SparklesIcon,
+  UserGroupIcon,
 } from "@hugeicons/core-free-icons"
 
 const browseNav = [
@@ -41,6 +42,12 @@ const browseNav = [
     icon: Search01Icon,
     match: (pathname: string) =>
       pathname.startsWith("/search") || pathname.startsWith("/developers"),
+  },
+  {
+    href: routes.match(),
+    label: "Match",
+    icon: UserGroupIcon,
+    match: (pathname: string) => pathname.startsWith("/match"),
   },
   {
     href: routes.favorites,

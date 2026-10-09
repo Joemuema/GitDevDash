@@ -10,6 +10,8 @@ handlers and server actions alike.
 - `github/` — GitHub REST clients (users, repos, tree, activity, languages).
 - `search/` — Search-page URL param parsing/building.
 - `favorites/` — Favorites localStorage key + parsing helpers.
+- `match/` — Job-description matching engine (JD parser, stack fingerprints,
+  heuristic scorer, developer rollup, tips). See `lib/match/README.md`.
 - `types/` — Shared `GitHubUserSummary` / `GitHubRepoSummary` /
   `GitHubRepoDetail` / `LanguageStat` shapes.
 
