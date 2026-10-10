@@ -20,20 +20,20 @@ everything else lives in `components/`, `lib/` and `hooks/`.
 Two premade patterns are used; which one appears depends on the route.
 
 **Every page except home — circuit board.** `components/layout/page-backdrop.tsx`
-renders a fixed layer using the Hero Patterns *Circuit Board* artwork, stored
+renders a fixed layer using the Hero Patterns _Circuit Board_ artwork, stored
 locally as `public/circuit-board.svg` (304×304, CC BY 4.0). It is applied as a
 CSS **mask** with `background-color: var(--foreground)`, so a single asset serves
 both themes instead of needing a light and dark copy.
 
 Its strength and scale are tuned in two places in `app/globals.css`:
 
-| Knob | Where | Value |
-| --- | --- | --- |
-| `--circuit-opacity` | `:root` / `.dark` | `0.05` light, `0.04` dark |
-| `mask-size` | `.circuit-backdrop` | `228px 228px` |
+| Knob                | Where               | Value                     |
+| ------------------- | ------------------- | ------------------------- |
+| `--circuit-opacity` | `:root` / `.dark`   | `0.05` light, `0.04` dark |
+| `mask-size`         | `.circuit-backdrop` | `200px 200px`             |
 
-The opacity is deliberately very low and the tile is scaled **down** to `228px`
-(0.75x the artwork's native `304px`) so the motifs read smaller. At full
+The opacity is deliberately very low and the tile is scaled **down** to `200px`
+(roughly 0.66x the artwork's native `304px`) so the motifs read smaller. At
 opacity and native scale the circuit reads as busy line work that competes
 with page content.
 
@@ -46,13 +46,13 @@ rounded hero panel on `app/(app)/page.tsx` rather than filling the viewport.
 
 ### Important: the inset must be transparent
 
-Both backdrops sit *behind* content, so any full-bleed wrapper painted
+Both backdrops sit _behind_ content, so any full-bleed wrapper painted
 `bg-background` will hide them. `SidebarInset` (in `components/ui/sidebar.tsx`)
 defaults to `bg-background`, which is why `app-shell.tsx` passes
 `bg-transparent`. If a new full-page wrapper is added, give it `bg-transparent`
 too.
 
-Cards and list surfaces sit at 75% (`bg-card/75`) so the backdrop texture shows
+Cards and list surfaces sit at 90% (`bg-card/90`) so the backdrop texture shows
 through faintly while text stays legible: the home hero panel
 (`app/(app)/page.tsx`), `DeveloperResultCard`, `RepositoryListItem`, the
 `ReposCarousel` cards, and the dropdown menus (`bg-popover/75`). Popovers and

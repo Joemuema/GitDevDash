@@ -67,9 +67,13 @@ export function FavoritesToolbar({
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <InputGroup className="sm:max-w-sm">
+      <InputGroup className="bg-card/90 sm:max-w-sm">
         <InputGroupAddon align="inline-start">
-          <HugeiconsIcon icon={Search01Icon} strokeWidth={2} className="size-4" />
+          <HugeiconsIcon
+            icon={Search01Icon}
+            strokeWidth={2}
+            className="size-4"
+          />
         </InputGroupAddon>
         <InputGroupInput
           type="search"
@@ -87,7 +91,11 @@ export function FavoritesToolbar({
               <Button {...props} type="button" variant="outline" size="sm" />
             )}
           >
-            <HugeiconsIcon icon={FilterIcon} strokeWidth={2} className="size-4" />
+            <HugeiconsIcon
+              icon={FilterIcon}
+              strokeWidth={2}
+              className="size-4"
+            />
             {sortLabel}
             <HugeiconsIcon
               icon={ChevronDownIcon}
@@ -136,7 +144,9 @@ export function FavoritesToolbar({
                 />
                 <span>Clear all</span>
               </TooltipTrigger>
-              <TooltipContent>Remove all {count} saved developers</TooltipContent>
+              <TooltipContent>
+                Remove all {count} saved developers
+              </TooltipContent>
             </Tooltip>
             <AlertDialogContent>
               <AlertDialogHeader>

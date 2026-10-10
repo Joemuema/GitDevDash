@@ -12,7 +12,7 @@ export default function HomePage() {
         `FlickeringGrid`, contained in a rounded hero panel so the animation
         frames the pitch instead of running edge-to-edge behind the copy.
       */}
-      <section className="relative isolate overflow-hidden rounded-3xl border border-border/60 bg-card/75 px-6 py-10 md:px-10 md:py-14">
+      <section className="relative isolate overflow-hidden rounded-3xl border border-border/60 bg-card/90 px-6 py-10 md:px-10 md:py-14">
         <HomeFlicker />
         <SearchHero />
         <div className="mt-8">

@@ -43,7 +43,7 @@ export function ReposCarousel({
             key={repo.fullName}
             className="basis-[280px] sm:basis-[300px] md:basis-[260px]"
           >
-            <Card size="sm" className="h-full bg-card/75">
+            <Card size="sm" className="h-full bg-card/90">
               <CardContent>
                 <RepositoryListItem username={username} repo={repo} />
               </CardContent>

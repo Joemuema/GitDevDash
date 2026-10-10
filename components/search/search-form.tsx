@@ -16,7 +16,11 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { searchRoute } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -51,7 +55,10 @@ export function SearchForm({
   const [dateOpen, setDateOpen] = useState(false)
   const [advancedOpen, setAdvancedOpen] = useState(
     Boolean(
-      defaultLocation || defaultLanguage || defaultReposMin || defaultJoinedAfter
+      defaultLocation ||
+      defaultLanguage ||
+      defaultReposMin ||
+      defaultJoinedAfter
     )
   )
 
@@ -79,7 +86,7 @@ export function SearchForm({
         Search developers
       </label>
       <div className="flex flex-col gap-2 sm:flex-row">
-        <InputGroup className="flex-1">
+        <InputGroup className="flex-1 bg-card/90">
           <InputGroupAddon align="inline-start">
             <HugeiconsIcon
               icon={Search01Icon}
@@ -131,7 +138,7 @@ export function SearchForm({
         </CollapsibleTrigger>
         <CollapsibleContent className="pt-3">
           <div className="flex flex-col gap-3 sm:flex-row">
-            <InputGroup className="flex-1">
+            <InputGroup className="flex-1 bg-card/90">
               <InputGroupAddon align="inline-start">
                 <span className="text-xs">Location</span>
               </InputGroupAddon>
@@ -144,7 +151,7 @@ export function SearchForm({
                 aria-label="Filter by location"
               />
             </InputGroup>
-            <InputGroup className="flex-1">
+            <InputGroup className="flex-1 bg-card/90">
               <InputGroupAddon align="inline-start">
                 <span className="text-xs">Language</span>
               </InputGroupAddon>
@@ -157,7 +164,7 @@ export function SearchForm({
                 aria-label="Filter by language"
               />
             </InputGroup>
-            <InputGroup className="sm:w-44">
+            <InputGroup className="bg-card/90 sm:w-44">
               <InputGroupAddon align="inline-start">
                 <span className="text-xs">Min repos</span>
               </InputGroupAddon>
@@ -165,9 +172,7 @@ export function SearchForm({
                 type="number"
                 placeholder="0"
                 value={reposMin}
-                onChange={(e) =>
-                  setReposMin(e.target.value.replace(/\D/g, ""))
-                }
+                onChange={(e) => setReposMin(e.target.value.replace(/\D/g, ""))}
                 autoComplete="off"
                 aria-label="Minimum number of repositories"
               />

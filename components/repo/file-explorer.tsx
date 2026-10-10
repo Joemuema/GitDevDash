@@ -292,7 +292,7 @@ export function FileExplorer({
       </div>
 
       <ScrollArea
-        className="rounded-3xl border border-border/60"
+        className="rounded-3xl border border-border/60 bg-card/90"
         style={{ height: maxHeight }}
       >
         <Table>

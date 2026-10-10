@@ -136,9 +136,9 @@
  *
  * The artwork is applied as a *mask* so the stroke can be painted with
  * `var(--foreground)`. One asset therefore serves both themes, and the strength
- * is tuned per theme via `--circuit-opacity`. The tile is rendered at 228px
- * (0.75x the artwork's native 304px viewBox), so the motifs read smaller
- * while still repeating evenly.
+ * is tuned per theme via `--circuit-opacity`. The tile is rendered at 200px
+ * (roughly 0.66x the artwork's native 304px viewBox), so the motifs read
+ * smaller while still repeating evenly.
  */
 .circuit-backdrop {
     background-color: var(--foreground);
@@ -147,6 +147,6 @@
     mask-image: url("/circuit-board.svg");
     -webkit-mask-repeat: repeat;
     mask-repeat: repeat;
-    -webkit-mask-size: 228px 228px;
-    mask-size: 228px 228px;
+    -webkit-mask-size: 200px 200px;
+    mask-size: 200px 200px;
   }

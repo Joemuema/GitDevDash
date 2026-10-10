@@ -17,7 +17,7 @@ export function DeveloperResultCard({ user }: { user: GitHubUserSummary }) {
   const initials = user.login.slice(0, 2).toUpperCase()
 
   return (
-    <article className="flex flex-col gap-4 rounded-xl border border-border/60 bg-card/75 p-4 sm:flex-row sm:items-start">
+    <article className="flex flex-col gap-4 rounded-xl border border-border/60 bg-card/90 p-4 sm:flex-row sm:items-start">
       <Avatar className="size-14 shrink-0">
         <AvatarImage src={user.avatarUrl} alt={""} />
         <AvatarFallback>{initials}</AvatarFallback>
