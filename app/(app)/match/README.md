@@ -8,5 +8,10 @@ Per-candidate failures degrade into `failedLogins`; extras into
 `routes.developerMatch(login, jdEncoded)` — the Step 3 page with the JD
 pre-filled, carrying the human-decision disclaimer.
 
+Step 6 additions: `MatchShareActions` (copy-link + account-gated CSV) above
+the results, and `SavedJdsPanel` (browser-local saved roles) under the
+intake. Share links keep working for anonymous visitors; CSV export and
+cross-device sync need an account.
+
 Shareable URL: the whole shortlist (JD + logins) round-trips through the
 query string, so hiring teams can paste a link into an ATS or chat.

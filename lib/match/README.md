@@ -6,10 +6,10 @@ candidate scores with evidence pointers and repo-tailoring tips.
 
 ## Status
 
-**Step 1 of the hiring-match plan — DONE.** Pure engine only; no UI yet.
-Next: Step 2 (framework fingerprinting is already inside `stack.ts`; the
-remaining Step 2 work is per-repo wiring), then Step 3 (profile match card),
-Step 4 (`/match` batch shortlist), Step 5 (tips panel), Step 6 (saved JDs).
+**Steps 1–6 of the hiring-match plan — DONE.** Engine (Step 1), deep scan
+(Step 2), profile card (Step 3), batch shortlist (Step 4), tips panel
+(Step 5), saved JDs + share/export + gating (Step 6). Remaining: LLM
+re-ranker seam, private-repo/resume signals, cross-device sync.
 
 ## Files
 
@@ -39,6 +39,9 @@ Step 4 (`/match` batch shortlist), Step 5 (tips panel), Step 6 (saved JDs).
   branch, then languages + tree in parallel. Per-repo failures degrade that
   repo out; returns `DeepScanResult` (`DeveloperMatch` + languages +
   activity + `DeepScanStats`). All reads go through the cached clients.
+- `saved-jds.ts` — Browser-local saved-JD store (same
+  `useSyncExternalStore` external-store pattern as favorites).
+- `export-csv.ts` — Pure `batchResultToCsv` flattener for ATS handoff.
 - `index.ts` — Barrel exports.
 
 ## How it connects

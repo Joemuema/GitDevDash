@@ -30,6 +30,12 @@ import { buildTips } from "@/lib/match/tips"
  */
 
 export type { RepoScorer, RepoScoringInput }
+export type {
+  DeveloperMatch,
+  DimensionScore,
+  JobSignal,
+  MatchConfidence,
+} from "@/lib/match/types"
 
 export type DeveloperScoringInput = {
   login: string

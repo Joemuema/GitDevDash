@@ -13,5 +13,8 @@ provider.
   replace/clearAll, readiness) and `useFavoriteUser(login)` convenience
   from `FavoritesProvider`. Used by `FavoriteButton`, result cards and the
   favorites page.
+- `use-saved-jds.ts` — `useSavedJds()` (list, count, save/remove/clearAll,
+  readiness) from `SavedJdsProvider`. Used by the match page's saved-roles
+  panel; browser-local until account sync lands.
 - `use-mobile.ts` — `useIsMobile()` via `useSyncExternalStore` media-query
   subscription (SSR-safe). Used by sidebar/carousel responsive behaviour.

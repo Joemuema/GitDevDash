@@ -21,7 +21,7 @@ import {
   type DeveloperMatch,
   type JobSignal,
   type RepoScoringInput,
-} from "@/lib/match"
+} from "@/lib/match/rollup"
 
 /*
  * Step 2 — deep-scan wiring. Fetches the live GitHub data a single developer

@@ -19,6 +19,12 @@ Server-rendered data, client-rendered interactivity.
   (Quick wins / Portfolio gaps / For this JD) with count badges, severity
   badges, and a "View repo" action linking into the repo page. Mounted on
   the Step 3 developer view and for the top-ranked Step 4 candidate.
+- `saved-jds-provider.tsx` + `saved-jds-panel.tsx` — Browser-local saved
+  roles (save current JD, reload, delete). Gated note: anonymous data stays
+  local until account sync lands.
+- `match-share-actions.tsx` — Copy share link (free, URL round-trips JD +
+  logins) and Export CSV (account-gated: anonymous visitors get a sign-in
+  nudge instead of a download).
 
 ## How it connects
 
@@ -28,4 +34,5 @@ MatchIntake --?jd=&devs=--> /match --batchMatchDevelopers--> MatchShortlist
   --View match--> developer page ?jd= (single-dev toggle)
 ```
 
-Steps 3 + 4 of the hiring-match plan.
+Steps 3–6 of the hiring-match plan (profile card, batch shortlist, tips,
+saved JDs + share/export).

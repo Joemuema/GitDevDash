@@ -5,10 +5,11 @@ import { AuthProvider } from "@/components/auth/auth-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { FavoritesProvider } from "@/components/favorites/favorites-provider"
+import { SavedJdsProvider } from "@/components/match/saved-jds-provider"
 import { getCurrentUser } from "@/lib/auth/dal"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -37,13 +38,20 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", geist.variable)}
+      className={cn(
+        "antialiased",
+        fontMono.variable,
+        "font-sans",
+        geist.variable
+      )}
     >
       <body>
         <ThemeProvider>
           <TooltipProvider>
             <FavoritesProvider>
-              <AuthProvider user={user}>{children}</AuthProvider>
+              <SavedJdsProvider>
+                <AuthProvider user={user}>{children}</AuthProvider>
+              </SavedJdsProvider>
             </FavoritesProvider>
           </TooltipProvider>
         </ThemeProvider>

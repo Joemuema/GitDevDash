@@ -38,8 +38,6 @@ export {
 export { buildTips, type TipsInput } from "@/lib/match/tips"
 export {
   batchMatchDevelopers,
-  MAX_MATCH_CANDIDATES,
-  MATCH_REPOS_PER_CANDIDATE,
   parseBatchMatchParams,
   type BatchCandidateResult,
   type BatchMatchResult,
@@ -47,11 +45,24 @@ export {
 export {
   decodeJdParam,
   encodeJdParam,
-  parseJdParam,
-} from "@/lib/match/jd-param"
+  MAX_JD_CHARS,
+} from "@/lib/match/jd-codec"
+export { parseJdParam } from "@/lib/match/jd-param"
 export {
   deepScanDeveloper,
   DEFAULT_DEEP_SCAN_LIMIT,
   type DeepScanResult,
   type DeepScanStats,
 } from "@/lib/match/deep-scan"
+export { batchResultToCsv } from "@/lib/match/export-csv"
+export {
+  createSavedJdId,
+  getSavedJdsServerSnapshot,
+  getSavedJdsSnapshot,
+  mutateSavedJds,
+  readSavedJdsFromStorage,
+  setSavedJds,
+  subscribeToSavedJds,
+  SAVED_JDS_STORAGE_KEY,
+  type SavedJd,
+} from "@/lib/match/saved-jds"

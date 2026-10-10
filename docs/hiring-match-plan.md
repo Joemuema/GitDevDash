@@ -25,11 +25,13 @@ resume-upload signals later.
 - [x] **Step 4 — `/match` batch shortlist.** JD intake, ranked results,
       compare table, human-decision disclaimer.
 - [x] **Step 5 — Tips panel.** `TipsPanel` (`Item` + `Tabs` + `Badge`)
-  on the Step 3 developer view and for the top-ranked Step 4 candidate.
-- [ ] **Step 6 — Saved JDs, share/export, gating.** Persist JDs, CSV export,
-      auth hooks.
+      on the Step 3 developer view and for the top-ranked Step 4 candidate.
+- [x] **Step 6 — Saved JDs, share/export, gating.** `SavedJdsProvider` +
+      `SavedJdsPanel` (browser-local saved roles), `MatchShareActions` (free
+      copy-link + account-gated CSV via `batchResultToCsv`), anonymous share
+      preserved.
 
 ## Current step
 
-**Step 5 DONE** (`TipsPanel` on developer page + top batch candidate).
-Next up: Step 6 (saved JDs, share/export, gating).
+**Step 6 DONE** — all six plan steps implemented. Remaining: LLM JD-parser
+reminder, private-repo/resume signals, cross-device sync.

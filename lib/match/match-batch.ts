@@ -12,8 +12,16 @@ import {
   sortReposForFeatured,
 } from "@/lib/github/repos"
 import { getRepoTree } from "@/lib/github/tree"
-import type { JobSignal } from "@/lib/match"
-import { scoreDeveloper, scoreRepo, type DeveloperMatch } from "@/lib/match"
+import {
+  MAX_MATCH_CANDIDATES,
+  MATCH_REPOS_PER_CANDIDATE,
+} from "@/lib/match/match-limits"
+import type { JobSignal } from "@/lib/match/types"
+import {
+  scoreDeveloper,
+  scoreRepo,
+  type DeveloperMatch,
+} from "@/lib/match/rollup"
 
 /*
  * Step 4 — batch orchestration. Scores several developers against one parsed
@@ -27,8 +35,7 @@ import { scoreDeveloper, scoreRepo, type DeveloperMatch } from "@/lib/match"
  * instead of failing the batch.
  */
 
-export const MAX_MATCH_CANDIDATES = 5
-export const MATCH_REPOS_PER_CANDIDATE = 8
+export { MAX_MATCH_CANDIDATES, MATCH_REPOS_PER_CANDIDATE }
 
 export type BatchCandidateResult = {
   login: string

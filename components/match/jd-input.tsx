@@ -5,7 +5,7 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { encodeJdParam } from "@/lib/match/jd-param"
+import { encodeJdParam } from "@/lib/match/jd-codec"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Briefcase01Icon } from "@hugeicons/core-free-icons"
 

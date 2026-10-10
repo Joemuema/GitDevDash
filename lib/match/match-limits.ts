@@ -1,0 +1,2 @@
+export const MAX_MATCH_CANDIDATES = 5
+export const MATCH_REPOS_PER_CANDIDATE = 8
