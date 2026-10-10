@@ -33,5 +33,8 @@ resume-upload signals later.
 
 ## Current step
 
-**Step 6 DONE** — all six plan steps implemented. Remaining: LLM JD-parser
-reminder, private-repo/resume signals, cross-device sync.
+**Steps 1–7 DONE — plan complete.** Engine → deep scan → profile card →
+batch shortlist → tips panel → saved JDs/share/export/gating →
+docs sweep (READMEs current, typecheck + lint + build green).
+Remaining, all deferred by decision: LLM JD-parser reminder, LLM
+re-ranker seam, private-repo/resume signals, cross-device sync.
