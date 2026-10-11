@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto"
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises"
 import path from "node:path"
 
-import type { AuthProvider, SessionUser } from "@/lib/auth/types"
+import type { AuthProvider, SessionUser, UserRole } from "@/lib/auth/types"
 
 /**
  * Account persistence.
@@ -27,6 +27,12 @@ export type StoredUser = {
   email: string
   provider: AuthProvider
   image: string | null
+  /**
+   * Which interface the account uses. `null` for accounts created before roles
+   * existed — they are prompted to pick once instead of being defaulted.
+   */
+  role: UserRole | null
+  roleUpdatedAt: string | null
   /** Absent for Google-only accounts, which never set a local password. */
   passwordHash: string | null
   /** Bumped on password change to invalidate other outstanding sessions. */
@@ -52,8 +58,7 @@ const EMPTY_DATABASE: Database = { version: 1, users: [] }
  * and copies all of it into the server output.
  */
 const STORE_PATH =
-  process.env.AUTH_STORE_PATH ??
-  path.join(process.cwd(), ".data", "users.json")
+  process.env.AUTH_STORE_PATH ?? path.join(process.cwd(), ".data", "users.json")
 
 /** Serialises every read-modify-write cycle against a single promise chain. */
 let writeQueue: Promise<unknown> = Promise.resolve()
@@ -116,6 +121,7 @@ export function toSessionUser(user: StoredUser): SessionUser {
     email: user.email,
     provider: user.provider,
     image: user.image,
+    role: user.role,
     createdAt: user.createdAt,
   }
 }
@@ -125,7 +131,9 @@ export async function findUserById(id: string): Promise<StoredUser | null> {
   return database.users.find((user) => user.id === id) ?? null
 }
 
-export async function findUserByEmail(email: string): Promise<StoredUser | null> {
+export async function findUserByEmail(
+  email: string
+): Promise<StoredUser | null> {
   const normalized = normalizeEmail(email)
   const database = await readDatabase()
   return database.users.find((user) => user.email === normalized) ?? null
@@ -137,6 +145,11 @@ export type CreateUserInput = {
   provider: AuthProvider
   passwordHash?: string | null
   image?: string | null
+  /**
+   * Fresh sign-ups have not chosen an interface yet, so they default to `null`
+   * and are routed through the role picker on first visit.
+   */
+  role?: UserRole | null
 }
 
 /**
@@ -146,7 +159,9 @@ export type CreateUserInput = {
  */
 export async function createUser(
   input: CreateUserInput
-): Promise<{ ok: true; user: StoredUser } | { ok: false; reason: "duplicate" }> {
+): Promise<
+  { ok: true; user: StoredUser } | { ok: false; reason: "duplicate" }
+> {
   return withLock(async () => {
     const database = await readDatabase()
     const email = normalizeEmail(input.email)
@@ -162,6 +177,8 @@ export async function createUser(
       email,
       provider: input.provider,
       image: input.image ?? null,
+      role: input.role ?? null,
+      roleUpdatedAt: input.role ? now : null,
       passwordHash: input.passwordHash ?? null,
       sessionVersion: 1,
       createdAt: now,
@@ -180,7 +197,15 @@ export async function createUser(
 export async function updateUser(
   id: string,
   changes: Partial<
-    Pick<StoredUser, "name" | "image" | "passwordHash" | "sessionVersion">
+    Pick<
+      StoredUser,
+      | "name"
+      | "image"
+      | "role"
+      | "roleUpdatedAt"
+      | "passwordHash"
+      | "sessionVersion"
+    >
   >
 ): Promise<StoredUser | null> {
   return withLock(async () => {

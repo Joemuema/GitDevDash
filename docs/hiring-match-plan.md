@@ -33,8 +33,10 @@ resume-upload signals later.
 
 ## Current step
 
-**Steps 1–7 DONE — plan complete.** Engine → deep scan → profile card →
+**Steps 1–8 DONE.** Engine → deep scan → profile card →
 batch shortlist → tips panel → saved JDs/share/export/gating →
-docs sweep (READMEs current, typecheck + lint + build green).
+docs sweep → **roles foundation** (store `role`, `setRole` action,
+`requireRole` + `RoleGate`, `/welcome` picker, `/hire` + `/grow` guarded
+subtrees, role-aware sidebar, Settings interface switcher).
 Remaining, all deferred by decision: LLM JD-parser reminder, LLM
 re-ranker seam, private-repo/resume signals, cross-device sync.

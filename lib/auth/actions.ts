@@ -29,7 +29,8 @@ const MIN_PASSWORD_LENGTH = 8
 const GENERIC_CREDENTIALS_ERROR =
   "That email and password combination doesn't match an account."
 
-const SESSION_EXPIRED_MESSAGE = "Your session has expired. Please sign in again."
+const SESSION_EXPIRED_MESSAGE =
+  "Your session has expired. Please sign in again."
 
 function readField(formData: FormData, key: string): string {
   const value = formData.get(key)
@@ -142,6 +143,53 @@ export async function registerAccount(
   }
 }
 
+export async function setRole(
+  _previousState: AuthFormState,
+  formData: FormData
+): Promise<AuthFormState> {
+  const raw = formData.get("role")
+  const role = typeof raw === "string" ? raw.trim() : ""
+  if (role !== "hirer" && role !== "developer") {
+    return {
+      status: "error",
+      message: "Choose whether you hire developers or grow as one.",
+    }
+  }
+
+  const current = await getCurrentUserRecord()
+  if (!current) {
+    return { status: "error", message: SESSION_EXPIRED_MESSAGE }
+  }
+
+  if (current.role === role) {
+    return {
+      status: "info",
+      message:
+        role === "hirer"
+          ? "You're already using the hirer interface."
+          : "You're already using the developer interface.",
+    }
+  }
+
+  const updated = await updateUser(current.id, {
+    role,
+    roleUpdatedAt: new Date().toISOString(),
+  })
+  if (!updated) {
+    return { status: "error", message: "We couldn't save your choice." }
+  }
+
+  revalidatePath("/", "layout")
+
+  return {
+    status: "success",
+    message:
+      role === "hirer"
+        ? "Hirer interface selected. Match and shortlist developers faster."
+        : "Developer interface selected. Grow your visibility and tailor repos.",
+  }
+}
+
 export async function signOut(): Promise<AuthFormState> {
   await deleteSession()
   revalidatePath("/", "layout")
@@ -244,4 +292,3 @@ export async function changePassword(
       "Password changed. Any other signed-in devices have been signed out.",
   }
 }
-

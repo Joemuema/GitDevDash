@@ -1,7 +1,13 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useActionState, useEffect, useRef, useState, useTransition } from "react"
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react"
 
 import { LoginPopup } from "@/components/auth/login-popup"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -31,13 +37,12 @@ import { Separator } from "@/components/ui/separator"
 import { useAuth } from "@/hooks/use-auth"
 import {
   changePassword,
+  setRole,
   signOut,
   updateProfile,
 } from "@/lib/auth/actions"
-import {
-  initialAuthFormState,
-  type AuthFormState,
-} from "@/lib/auth/form-state"
+import { initialAuthFormState, type AuthFormState } from "@/lib/auth/form-state"
+import { routes } from "@/lib/routes"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Alert02Icon,
@@ -76,6 +81,7 @@ export function AccountSettings() {
         provider={user.provider}
         createdAt={user.createdAt}
       />
+      <InterfaceCard currentRole={user.role} />
       <ProfileFormCard currentName={user.name} />
       {user.provider === "email" ? (
         <PasswordFormCard />
@@ -191,7 +197,9 @@ function ProfileSummaryCard({
     <Card>
       <CardHeader>
         <CardTitle>Profile</CardTitle>
-        <CardDescription>How your account appears in GitDevDash.</CardDescription>
+        <CardDescription>
+          How your account appears in GitDevDash.
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <Avatar size="lg">
@@ -222,6 +230,95 @@ function ProfileSummaryCard({
             </span>
           </div>
         </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function InterfaceCard({
+  currentRole,
+}: {
+  currentRole: "hirer" | "developer" | null
+}) {
+  const router = useRouter()
+  const [state, formAction, isPending] = useActionState(
+    setRole,
+    initialAuthFormState
+  )
+
+  useEffect(() => {
+    if (state.status === "success") router.refresh()
+  }, [state, router])
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Interface</CardTitle>
+        <CardDescription>
+          Hirers get matching and shortlists; developers get visibility and repo
+          tips. Base features stay available either way.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form action={formAction} className="space-y-4">
+          <FieldGroup>
+            <div className="flex flex-wrap gap-2">
+              <label
+                className={`flex cursor-pointer items-center gap-2 rounded-3xl border px-4 py-2 text-sm transition-colors ${
+                  currentRole === "hirer"
+                    ? "border-primary/40 bg-primary/10"
+                    : "border-input hover:bg-input/40"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value="hirer"
+                  defaultChecked={currentRole === "hirer"}
+                  className="accent-primary"
+                />
+                <span className="font-medium">Hirer</span>
+              </label>
+              <label
+                className={`flex cursor-pointer items-center gap-2 rounded-3xl border px-4 py-2 text-sm transition-colors ${
+                  currentRole === "developer"
+                    ? "border-primary/40 bg-primary/10"
+                    : "border-input hover:bg-input/40"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value="developer"
+                  defaultChecked={currentRole === "developer"}
+                  className="accent-primary"
+                />
+                <span className="font-medium">Developer</span>
+              </label>
+            </div>
+          </FieldGroup>
+
+          <ResultAlert state={state} />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="submit" size="sm" disabled={isPending}>
+              {isPending ? "Saving…" : "Switch interface"}
+            </Button>
+            {currentRole === "hirer" ? (
+              <a className="text-sm underline" href={routes.hire.home}>
+                Go to Hire
+              </a>
+            ) : currentRole === "developer" ? (
+              <a className="text-sm underline" href={routes.grow.home}>
+                Go to Grow
+              </a>
+            ) : (
+              <a className="text-sm underline" href={routes.welcome}>
+                Pick your interface
+              </a>
+            )}
+          </div>
+        </form>
       </CardContent>
     </Card>
   )
@@ -333,7 +430,9 @@ function PasswordInput({
             </Button>
           </InputGroupAddon>
         </InputGroup>
-        {description ? <FieldDescription>{description}</FieldDescription> : null}
+        {description ? (
+          <FieldDescription>{description}</FieldDescription>
+        ) : null}
       </FieldContent>
     </Field>
   )
@@ -402,8 +501,9 @@ function GoogleAccountCard({ email }: { email: string }) {
           <HugeiconsIcon icon={InformationCircleIcon} strokeWidth={2} />
           <AlertTitle>Signed in with Google</AlertTitle>
           <AlertDescription>
-            {email} uses Google to sign in, so GitDevDash never stores a password
-            for it. Manage it from your Google Account security settings.
+            {email} uses Google to sign in, so GitDevDash never stores a
+            password for it. Manage it from your Google Account security
+            settings.
           </AlertDescription>
         </Alert>
       </CardContent>
@@ -451,5 +551,3 @@ function SignOutCard() {
     </Card>
   )
 }
-
-

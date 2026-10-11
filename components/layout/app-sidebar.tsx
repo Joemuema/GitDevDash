@@ -16,6 +16,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { useAuth } from "@/hooks/use-auth"
 import { useFavorites } from "@/hooks/use-favorites"
 import { routes } from "@/lib/routes"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -26,6 +27,7 @@ import {
   Search01Icon,
   Settings01Icon,
   SparklesIcon,
+  Rocket01Icon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons"
 
@@ -44,12 +46,6 @@ const browseNav = [
       pathname.startsWith("/search") || pathname.startsWith("/developers"),
   },
   {
-    href: routes.match(),
-    label: "Match",
-    icon: UserGroupIcon,
-    match: (pathname: string) => pathname.startsWith("/match"),
-  },
-  {
     href: routes.favorites,
     label: "Favorites",
     icon: FavouriteIcon,
@@ -57,9 +53,35 @@ const browseNav = [
   },
 ] as const
 
+const hirerNav = [
+  {
+    href: routes.hire.home,
+    label: "Hire",
+    icon: UserGroupIcon,
+    match: (pathname: string) => pathname.startsWith("/hire"),
+  },
+  {
+    href: routes.match(),
+    label: "Job match",
+    icon: Search01Icon,
+    match: (pathname: string) => pathname.startsWith("/match"),
+  },
+] as const
+
+const developerNav = [
+  {
+    href: routes.grow.home,
+    label: "Grow",
+    icon: Rocket01Icon,
+    match: (pathname: string) => pathname.startsWith("/grow"),
+  },
+] as const
+
 export function AppSidebar() {
   const pathname = usePathname()
   const { count, isReady } = useFavorites()
+  const { user, isAuthenticated } = useAuth()
+  const role = user?.role ?? null
 
   return (
     <Sidebar collapsible="icon">
@@ -108,6 +130,80 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {!isAuthenticated || role === null ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>Explore</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={pathname.startsWith(routes.welcome)}
+                    tooltip="Pick your interface"
+                    render={<Link href={routes.welcome} />}
+                  >
+                    <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} />
+                    <span>For hirers</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={pathname.startsWith(routes.welcome)}
+                    tooltip="Pick your interface"
+                    render={<Link href={routes.welcome} />}
+                  >
+                    <HugeiconsIcon icon={Rocket01Icon} strokeWidth={2} />
+                    <span>For developers</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : null}
+
+        {role === "hirer" ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>Hirer</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {hirerNav.map((item) => (
+                  <SidebarMenuItem key={item.label}>
+                    <SidebarMenuButton
+                      isActive={item.match(pathname)}
+                      tooltip={item.label}
+                      render={<Link href={item.href} />}
+                    >
+                      <HugeiconsIcon icon={item.icon} strokeWidth={2} />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : null}
+
+        {role === "developer" ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>Developer</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {developerNav.map((item) => (
+                  <SidebarMenuItem key={item.label}>
+                    <SidebarMenuButton
+                      isActive={item.match(pathname)}
+                      tooltip={item.label}
+                      render={<Link href={item.href} />}
+                    >
+                      <HugeiconsIcon icon={item.icon} strokeWidth={2} />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : null}
 
         <SidebarGroup>
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>

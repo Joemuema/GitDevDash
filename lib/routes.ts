@@ -27,6 +27,13 @@ export const routes = {
   home: "/",
   favorites: "/favorites",
   settings: "/settings",
+  welcome: "/welcome",
+  hire: {
+    home: "/hire",
+  },
+  grow: {
+    home: "/grow",
+  },
   match: matchRoute,
   search: searchRoute,
   developer: developerRoute,

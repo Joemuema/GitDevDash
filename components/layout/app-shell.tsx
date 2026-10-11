@@ -6,6 +6,7 @@ import { PageBackdrop } from "@/components/layout/page-backdrop"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { OnboardingGate } from "@/components/onboarding/onboarding-gate"
+import { RoleGate } from "@/components/onboarding/role-gate"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -34,6 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SiteFooter />
       </SidebarInset>
       <OnboardingGate />
+      <RoleGate />
     </SidebarProvider>
   )
 }

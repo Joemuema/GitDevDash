@@ -16,6 +16,9 @@ truth lives server-side (`lib/auth/`); these components only render it.
   action) shown in `SiteHeader` when `useAuth()` returns a user.
 - `auth-notice.tsx` — Banner reading `?auth=` / `?auth_error=` search params
   (OAuth success and failure codes from `lib/auth/messages.ts`).
+- `role-gate.tsx` — Client-side fallback for role-gated UI. Server layouts use
+  `requireRole()`; this covers buttons and links that must degrade to a
+  welcome/sign-in CTA instead of navigating into a redirect.
 
 ## Connections
 

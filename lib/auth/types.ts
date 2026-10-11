@@ -11,6 +11,12 @@
 export type AuthProvider = "email" | "google"
 
 /**
+ * Which interface the account uses. `null` means the user has not picked yet
+ * (pre-role accounts and fresh sign-ups) and must go through the role picker.
+ */
+export type UserRole = "hirer" | "developer"
+
+/**
  * The shape of a user that is safe to hand to React components. It mirrors the
  * "Data Transfer Object" pattern from the Next.js authentication guide: never
  * pass the full user record (which contains a password hash) to the client.
@@ -21,6 +27,7 @@ export type SessionUser = {
   email: string
   provider: AuthProvider
   image: string | null
+  role: UserRole | null
   createdAt: string
 }
 
