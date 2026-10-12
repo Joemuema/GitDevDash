@@ -11,8 +11,9 @@ available here; job matching branches off from this workspace.
   drives `parseJdParam` → `assembleJdPool` (pasted logins first, JD-constrained
   GitHub search top-up, `searchDegraded` fallback) → untouched Step 4
   `batchMatchDevelopers` → `MatchShareActions` + `MatchShortlist`. Location
-  override steers only the discovery leg. Step 10 adds endorsements, named
-  shortlists, and compare.
+  override steers only the discovery leg. Step 10 adds endorsement counts +
+  toggles, a side-by-side `CompareTable`, and the interview-handoff section
+  (`ShortlistSaver` + `ShortlistsPanel`, backed by `getMyShortlists`).
 
 ## Connections
 

@@ -1,12 +1,20 @@
 import { MatchIntake } from "@/components/match/match-intake"
 import { MatchShareActions } from "@/components/match/match-share-actions"
 import { MatchShortlist } from "@/components/match/match-shortlist"
+import { CompareTable } from "@/components/match/compare-table"
 import { SavedJdsPanel } from "@/components/match/saved-jds-panel"
+import { ShortlistSaver } from "@/components/match/shortlist-saver"
+import { ShortlistsPanel } from "@/components/match/shortlists-panel"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { PageContainer } from "@/components/layout/page-container"
 import { PageSection } from "@/components/layout/page-section"
 import { requireRole } from "@/lib/auth/require-role"
 import { assembleJdPool } from "@/lib/hire/jd-pool"
+import { getMyShortlists } from "@/lib/hire/actions"
+import {
+  getEndorsementCounts,
+  getOwnEndorsements,
+} from "@/lib/hire/endorsements"
 import {
   batchMatchDevelopers,
   parseBatchMatchParams,
@@ -48,6 +56,12 @@ export default async function HirePage({ searchParams }: HirePageProps) {
     signal && pool && pool.logins.length > 0
       ? await batchMatchDevelopers(pool.logins, signal).catch(() => null)
       : null
+  const scoredLogins = batch ? batch.results.map((r) => r.login) : []
+  const [endorsementCounts, ownEndorsements, myShortlists] = await Promise.all([
+    getEndorsementCounts(scoredLogins),
+    getOwnEndorsements(user.id, scoredLogins),
+    getMyShortlists(),
+  ])
 
   return (
     <PageContainer className="space-y-8">
@@ -94,7 +108,16 @@ export default async function HirePage({ searchParams }: HirePageProps) {
                 </Alert>
               ) : null}
               <MatchShareActions batch={batch} />
-              <MatchShortlist batch={batch} jdEncoded={jdEncoded!} />
+              <MatchShortlist
+                batch={batch}
+                jdEncoded={jdEncoded!}
+                jdTags={[
+                  ...signal.requiredLanguages,
+                  ...signal.requiredFrameworks,
+                ]}
+                endorsementCounts={endorsementCounts}
+                ownEndorsements={ownEndorsements}
+              />
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
@@ -105,6 +128,36 @@ export default async function HirePage({ searchParams }: HirePageProps) {
           )}
         </PageSection>
       ) : null}
+      {signal && batch && batch.results.length > 1 ? (
+        <PageSection
+          title="Side-by-side compare"
+          description="Same results, transposed for the interview handoff — candidates as columns, signals as rows."
+        >
+          <CompareTable
+            results={batch.results}
+            jdEncoded={jdEncoded!}
+            endorsementCounts={endorsementCounts}
+          />
+        </PageSection>
+      ) : null}
+      {jd && signal ? (
+        <PageSection
+          title="Interview handoff"
+          description="Save this run under a name with notes, or reload a saved shortlist."
+        >
+          <div className="space-y-4">
+            <ShortlistSaver jdText={jd.text} logins={pastedLogins.join(", ")} />
+            <ShortlistsPanel shortlists={myShortlists} />
+          </div>
+        </PageSection>
+      ) : (
+        <PageSection
+          title="Saved shortlists"
+          description="Named runs with interview notes, ready to reload."
+        >
+          <ShortlistsPanel shortlists={myShortlists} />
+        </PageSection>
+      )}
     </PageContainer>
   )
 }

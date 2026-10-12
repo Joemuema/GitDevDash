@@ -2,6 +2,7 @@ import Link from "next/link"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { EndorseButton } from "@/components/match/endorse-button"
 import {
   Table,
   TableBody,
@@ -37,9 +38,18 @@ function scoreClass(score: number): string {
 export function MatchShortlist({
   batch,
   jdEncoded,
+  jdTags = [],
+  endorsementCounts = {},
+  ownEndorsements = {},
 }: {
   batch: BatchMatchResult
   jdEncoded: string
+  /** Step 10: JD languages + frameworks, constraining endorsement tags. */
+  jdTags?: string[]
+  /** Step 10: public aggregates (no hirer identities). */
+  endorsementCounts?: Record<string, number>
+  /** Step 10: this account's toggles, keyed by login. */
+  ownEndorsements?: Record<string, { roleTag: string }>
 }) {
   return (
     <div className="space-y-4">
@@ -82,6 +92,7 @@ export function MatchShortlist({
                 </TableHead>
               ))}
               <TableHead>Top repo</TableHead>
+              <TableHead className="text-right">Merit</TableHead>
               <TableHead className="text-right">Details</TableHead>
             </TableRow>
           </TableHeader>
@@ -126,6 +137,16 @@ export function MatchShortlist({
                   {match.topRepos[0]
                     ? match.topRepos[0].repoFullName.split("/")[1]
                     : "—"}
+                </TableCell>
+                <TableCell className="text-right">
+                  <EndorseButton
+                    login={login}
+                    roleTag={ownEndorsements[login]?.roleTag ?? "Strong hire"}
+                    langTags={jdTags}
+                    allowedTags={jdTags}
+                    initialEndorsed={Boolean(ownEndorsements[login])}
+                    initialCount={endorsementCounts[login] ?? 0}
+                  />
                 </TableCell>
                 <TableCell className="text-right">
                   <Button

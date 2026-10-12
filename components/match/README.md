@@ -12,9 +12,10 @@ Server-rendered data, client-rendered interactivity.
   one-click button fills the logins from browser-local favorites
   (`useFavorites`) when the field is empty.
 - `match-shortlist.tsx` — Ranked results `Table` (score + 5 dimension cells
-  with `Tooltip` evidence + top repo + "View match" link into the Step 3
-  single view), `failedLogins`/`trimmedLogins` alerts, human-decision
-  disclaimer.
+  with `Tooltip` evidence + top repo + Step 10 Merit `EndorseButton` +
+  "View match" link into the Step 3 single view), `failedLogins`/
+  `trimmedLogins` alerts, human-decision disclaimer. Endorsement props are
+  optional, so the table stays backward-compatible.
 - `match-card.tsx` — Single-developer card: big score, confidence `Badge`,
   per-dimension anatomy bars with `Tooltip` evidence, confidence reasons, and
   the human-decision disclaimer.
@@ -28,6 +29,13 @@ Server-rendered data, client-rendered interactivity.
 - `match-share-actions.tsx` — Copy share link (free, URL round-trips JD +
   logins) and Export CSV (account-gated: anonymous visitors get a sign-in
   nudge instead of a download).
+- `endorse-button.tsx` — Step 10 merit toggle (ThumbsUp + count `Badge`
+  affordance, aggregate count public, own toggle private).
+- `compare-table.tsx` — Step 10 transposed compare: candidates as columns,
+  score + 5 dimensions + top repo + endorsements + details as rows.
+- `shortlist-saver.tsx` + `shortlists-panel.tsx` — Step 10 interview handoff:
+  save the run under a name with notes; reload/rename/note/delete (delete
+  behind an `AlertDialog` confirm).
 
 ## How it connects
 

@@ -43,12 +43,20 @@ resume-upload signals later.
       JD-constrained GitHub search (`searchDegraded` fallback); the untouched
       Step 4 `batchMatchDevelopers` scores into `MatchShortlist`. Favorites
       merge client-side via intake prefill.
+- [x] **Step 10 — Merit + shortlists + compare.** `lib/hire/endorsements.ts`
+      (one endorsement per account per login, aggregate counts public, toggles
+      private) + `lib/hire/shortlists.ts` (named runs with interview notes,
+      20-per-account cap) + hirer-only `lib/hire/actions.ts`; `EndorseButton`
+      Merit column on the shortlist, transposed `CompareTable`, and the
+      interview-handoff section (`ShortlistSaver` + `ShortlistsPanel`) on
+      `/hire`.
 
 ## Current step
 
-**Steps 1-9 DONE.** Engine -> deep scan -> profile card ->
+**Steps 1-10 DONE.** Engine -> deep scan -> profile card ->
 batch shortlist -> tips panel -> saved JDs/share/export/gating ->
-docs sweep -> roles foundation -> **hirer JD search + ranking** (SearchForm JD mode,
-assembleJdPool, searchDegraded fallback, favorites prefill).
+docs sweep -> roles foundation -> hirer JD search + ranking ->
+**merit + shortlists + compare** (endorsements, named shortlists,
+side-by-side compare, interview handoff).
 Remaining, all deferred by decision: LLM JD-parser reminder, LLM
 re-ranker seam, private-repo/resume signals, cross-device sync.
