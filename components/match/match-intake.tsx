@@ -6,9 +6,10 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldTitle } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
+import { useFavorites } from "@/hooks/use-favorites"
 import { encodeJdParam } from "@/lib/match/jd-codec"
 import { MAX_MATCH_CANDIDATES } from "@/lib/match/match-limits"
-import { routes } from "@/lib/routes"
+import { hireJdRoute } from "@/lib/routes"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Briefcase01Icon, UserGroupIcon } from "@hugeicons/core-free-icons"
 
@@ -20,8 +21,11 @@ export function MatchIntake({
   defaultDevs?: string
 }) {
   const router = useRouter()
+  const { favorites, isReady } = useFavorites()
   const [jdText, setJdText] = useState(defaultJd)
   const [devs, setDevs] = useState(defaultDevs)
+
+  const favoriteLogins = favorites.map((f) => f.login).join(", ")
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -31,7 +35,7 @@ export function MatchIntake({
       .map((l) => l.trim())
       .filter(Boolean)
     if (!jd || logins.length === 0) return
-    router.push(routes.match({ jd: encodeJdParam(jd), devs: logins.join(",") }))
+    router.push(hireJdRoute(encodeJdParam(jd), { devs: logins.join(",") }))
   }
 
   return (
@@ -74,9 +78,23 @@ export function MatchIntake({
           className="bg-card/90"
         />
         <FieldDescription>
-          Tip: save developers to Favorites first, then copy their logins here.
+          Saved favorites are offered below as one click — they merge with
+          whatever you type here.
         </FieldDescription>
       </Field>
+      {isReady && favorites.length > 0 && !devs ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setDevs(favoriteLogins)}
+        >
+          Use {favorites.length} favorite{favorites.length === 1 ? "" : "s"}:{" "}
+          {favoriteLogins.length > 60
+            ? `${favoriteLogins.slice(0, 60)}…`
+            : favoriteLogins}
+        </Button>
+      ) : null}
       <Button type="submit" size="sm">
         Rank shortlist
       </Button>

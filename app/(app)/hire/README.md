@@ -1,4 +1,4 @@
-# `app/(app)/hire/` — Hirer workspace (Step 8 placeholder)
+# `app/(app)/hire/` — Hirer workspace (Steps 8–10)
 
 Hirer-only subtree guarded by `requireRole("hirer")`. Base features stay
 available here; job matching branches off from this workspace.
@@ -7,11 +7,16 @@ available here; job matching branches off from this workspace.
 
 - `layout.tsx` — Guards the subtree: anon/role-less → `/welcome`, developers
   → `/grow`.
-- `page.tsx` — Dashboard cards for rank-against-JD, interview shortlist, and
-  merit signals. Step 9 wires real JD search + ranking here; Step 10 adds
-  endorsements, named shortlists, and compare.
+- `page.tsx` — Step 9 JD search + ranking: `?jd=<base64url>&devs=a,b&loc=…`
+  drives `parseJdParam` → `assembleJdPool` (pasted logins first, JD-constrained
+  GitHub search top-up, `searchDegraded` fallback) → untouched Step 4
+  `batchMatchDevelopers` → `MatchShareActions` + `MatchShortlist`. Location
+  override steers only the discovery leg. Step 10 adds endorsements, named
+  shortlists, and compare.
 
 ## Connections
 
-- Guard: `lib/auth/require-role.ts`. Engine (reused, not forked):
-  `lib/match/deep-scan.ts`, `lib/match/match-batch.ts`.
+- Guard: `lib/auth/require-role.ts`. Pool: `lib/hire/jd-pool.ts`. Engine
+  (reused, not forked): `lib/match/deep-scan.ts`, `lib/match/match-batch.ts`.
+  Intake: `components/match/match-intake.tsx` (favorites one-click prefill).
+  Search entry: `components/search/search-form.tsx` JD mode (hirers only).

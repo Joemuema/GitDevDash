@@ -1,73 +1,110 @@
-import Link from "next/link"
-
+import { MatchIntake } from "@/components/match/match-intake"
+import { MatchShareActions } from "@/components/match/match-share-actions"
+import { MatchShortlist } from "@/components/match/match-shortlist"
+import { SavedJdsPanel } from "@/components/match/saved-jds-panel"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { PageContainer } from "@/components/layout/page-container"
 import { PageSection } from "@/components/layout/page-section"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { requireRole } from "@/lib/auth/require-role"
+import { assembleJdPool } from "@/lib/hire/jd-pool"
+import {
+  batchMatchDevelopers,
+  parseBatchMatchParams,
+} from "@/lib/match/match-batch"
+import { parseJdParam } from "@/lib/match/jd-param"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Alert02Icon } from "@hugeicons/core-free-icons"
+
+type HirePageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
 
 /**
- * Hirer workspace home (Step 8 placeholder).
+ * Step 9 — hirer JD search + ranking.
  *
- * Step 9 wires JD search + ranked results here; Step 10 adds endorsements,
- * named shortlists and compare. The batch pipeline (`batchMatchDevelopers`)
- * stays untouched until then.
+ * `?jd=<base64url>&devs=a,b&loc=Berlin` drives everything: the JD is parsed
+ * with the Step 1 parser, the pool assembles pasted logins first and tops up
+ * from a JD-constrained GitHub search, then `batchMatchDevelopers` scores the
+ * pool with the untouched Step 4 pipeline. The location override only steers
+ * the discovery leg, never the pasted candidates.
  */
-export default async function HirePage() {
+export default async function HirePage({ searchParams }: HirePageProps) {
   const user = await requireRole("hirer", "/hire")
+  const raw = await searchParams
+  const { jdEncoded, logins: pastedLogins } = parseBatchMatchParams(raw)
+  const jd = parseJdParam(jdEncoded ?? undefined)
+  const pick = (key: string) => {
+    const v = raw[key]
+    return Array.isArray(v) ? v[0] : v
+  }
+  const locOverride = (pick("loc") ?? "").trim()
+  const signal = jd?.signal ?? null
+
+  const pool =
+    signal && jd
+      ? await assembleJdPool(signal, pastedLogins, 5, locOverride || undefined)
+      : null
+  const batch =
+    signal && pool && pool.logins.length > 0
+      ? await batchMatchDevelopers(pool.logins, signal).catch(() => null)
+      : null
 
   return (
-    <PageContainer>
+    <PageContainer className="space-y-8">
       <PageSection
         title={`Hire faster, ${user.name}`}
-        description="Rank developers against a job description, then hand a shortlist to interviews. Final hiring decisions always stay with humans."
+        description="Paste a job description to rank developers. Scores assist screening only — the final hiring decision stays with human interviewers after onsite interviews."
       >
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Rank against a JD</CardTitle>
-              <CardDescription>
-                Paste a job description and score a batch of developers.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button render={<Link href="/match" />}>Open matching</Button>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Interview shortlist</CardTitle>
-              <CardDescription>
-                Save candidates, compare side by side, export for handoff.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Named shortlists land here in Step 10.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Merit signals</CardTitle>
-              <CardDescription>
-                Endorsements from other hirers, anonymized and weighted.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Endorsement ranking lands here in Step 10.
-              </p>
-            </CardContent>
-          </Card>
+        <div className="space-y-4">
+          <MatchIntake
+            defaultJd={jd?.text ?? ""}
+            defaultDevs={pastedLogins.join(", ")}
+          />
+          <SavedJdsPanel
+            currentText={jd?.text ?? ""}
+            currentLogins={pastedLogins.join(", ")}
+          />
         </div>
       </PageSection>
+      {jd && signal ? (
+        <PageSection
+          title={
+            signal.title
+              ? `Ranked candidates — ${signal.title}`
+              : "Ranked candidates"
+          }
+          description={
+            signal.requiredLanguages.length > 0 ||
+            signal.requiredFrameworks.length > 0
+              ? `Looking for ${[...signal.requiredLanguages, ...signal.requiredFrameworks].join(", ")}${locOverride ? ` in ${locOverride}` : ""}.`
+              : "Ranked by heuristic fit across languages, stack, relevance, quality and activity."
+          }
+        >
+          {pool && batch ? (
+            <div className="space-y-4">
+              {pool.searchDegraded ? (
+                <Alert>
+                  <HugeiconsIcon icon={Alert02Icon} strokeWidth={2} />
+                  <AlertTitle>GitHub search unavailable</AlertTitle>
+                  <AlertDescription>
+                    Discovery search failed (rate limit or network), so these
+                    results cover only your pasted candidates. Retry shortly for
+                    the full pool.
+                  </AlertDescription>
+                </Alert>
+              ) : null}
+              <MatchShareActions batch={batch} />
+              <MatchShortlist batch={batch} jdEncoded={jdEncoded!} />
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {pool && pool.logins.length === 0
+                ? "No candidates found. Paste logins, add favorites, or retry — the JD-constrained search came back empty."
+                : "Scoring failed (rate limit or network). Try fewer candidates or retry shortly."}
+            </p>
+          )}
+        </PageSection>
+      ) : null}
     </PageContainer>
   )
 }

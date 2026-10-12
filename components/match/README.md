@@ -7,7 +7,10 @@ Server-rendered data, client-rendered interactivity.
 - `jd-input.tsx` — Single-developer form (`Textarea` + submit/clear) pushing
   `?jd=<base64url>` on the developer page.
 - `match-intake.tsx` — Batch intake form: JD textarea + comma-separated
-  candidate logins, pushing `?jd=…&devs=…` on `/match`.
+  candidate logins, pushing `?jd=…&devs=…` on `/hire` (Step 9;
+  legacy `/match` redirects there). Favorites-aware: a
+  one-click button fills the logins from browser-local favorites
+  (`useFavorites`) when the field is empty.
 - `match-shortlist.tsx` — Ranked results `Table` (score + 5 dimension cells
   with `Tooltip` evidence + top repo + "View match" link into the Step 3
   single view), `failedLogins`/`trimmedLogins` alerts, human-decision
@@ -30,8 +33,10 @@ Server-rendered data, client-rendered interactivity.
 
 ```
 JdInput --?jd=--> developer page --deepScanDeveloper--> MatchCard(match)
-MatchIntake --?jd=&devs=--> /match --batchMatchDevelopers--> MatchShortlist
+MatchIntake --?jd=&devs=--> /hire --assembleJdPool-->
+  batchMatchDevelopers --> MatchShortlist (+searchDegraded fallback)
   --View match--> developer page ?jd= (single-dev toggle)
+SearchForm JD mode (hirers) --?jd=&devs=&loc=--> /hire (same pipeline)
 ```
 
 Steps 3–6 of the hiring-match plan (profile card, batch shortlist, tips,

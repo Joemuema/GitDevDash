@@ -11,6 +11,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import { Field, FieldDescription, FieldTitle } from "@/components/ui/field"
 import {
   InputGroup,
   InputGroupAddon,
@@ -21,14 +22,25 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { searchRoute } from "@/lib/routes"
+import { Textarea } from "@/components/ui/textarea"
+import { Toggle } from "@/components/ui/toggle"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { useAuth } from "@/hooks/use-auth"
+import { encodeJdParam } from "@/lib/match/jd-codec"
+import { hireJdRoute, searchRoute } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
+  Briefcase01Icon,
   Calendar03Icon,
   ChevronDownIcon,
   FilterIcon,
   Search01Icon,
+  UserGroupIcon,
 } from "@hugeicons/core-free-icons"
 
 export function SearchForm({
@@ -47,7 +59,12 @@ export function SearchForm({
   autoFocus?: boolean
 }) {
   const router = useRouter()
+  const { user } = useAuth()
+  const canMatchJd = user?.role === "hirer"
+  const [mode, setMode] = useState<"devs" | "jd">("devs")
   const [query, setQuery] = useState(defaultQuery)
+  const [jdText, setJdText] = useState("")
+  const [devs, setDevs] = useState("")
   const [location, setLocation] = useState(defaultLocation)
   const [language, setLanguage] = useState(defaultLanguage)
   const [reposMin, setReposMin] = useState(defaultReposMin)
@@ -64,15 +81,22 @@ export function SearchForm({
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (mode === "jd") {
+      const jd = jdText.trim()
+      if (!jd) return
+      const extra: Record<string, string> = {}
+      if (location.trim()) extra.loc = location.trim()
+      if (devs.trim()) extra.devs = devs.trim()
+      router.push(hireJdRoute(encodeJdParam(jd), extra))
+      return
+    }
     const trimmed = query.trim()
     if (!trimmed) return
-
     const params: Record<string, string> = {}
     if (location.trim()) params.location = location.trim()
     if (language.trim()) params.language = language.trim()
     if (reposMin.trim()) params.repos = reposMin.trim()
     if (joinedAfter) params.joinedAfter = joinedAfter
-
     router.push(searchRoute(trimmed, params))
   }
 
@@ -82,150 +106,262 @@ export function SearchForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-3" role="search">
-      <label htmlFor="developer-search" className="text-sm font-medium">
-        Search developers
-      </label>
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <InputGroup className="flex-1 bg-card/90">
-          <InputGroupAddon align="inline-start">
+      {canMatchJd ? (
+        <div
+          className="flex items-center gap-1"
+          role="group"
+          aria-label="Search mode"
+        >
+          <Toggle
+            pressed={mode === "devs"}
+            onPressedChange={(pressed) => {
+              if (pressed) setMode("devs")
+            }}
+            variant="outline"
+            size="sm"
+          >
             <HugeiconsIcon
-              icon={Search01Icon}
+              icon={UserGroupIcon}
               strokeWidth={2}
               className="size-4"
             />
-          </InputGroupAddon>
-          <InputGroupInput
-            id="developer-search"
-            name="q"
-            type="search"
-            placeholder="Username, name, or keyword…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            autoFocus={autoFocus}
-            autoComplete="off"
-          />
-        </InputGroup>
-        <Button type="submit" className="shrink-0">
-          Search
-        </Button>
-      </div>
-
-      <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
-        <CollapsibleTrigger
-          render={(props) => (
-            <Button
-              {...props}
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground"
+            Developers
+          </Toggle>
+          <Toggle
+            pressed={mode === "jd"}
+            onPressedChange={(pressed) => {
+              if (pressed) setMode("jd")
+            }}
+            variant="outline"
+            size="sm"
+          >
+            <HugeiconsIcon
+              icon={Briefcase01Icon}
+              strokeWidth={2}
+              className="size-4"
             />
-          )}
-        >
-          <HugeiconsIcon icon={FilterIcon} strokeWidth={2} className="size-4" />
-          Advanced filters
-          {activeFilterCount > 0 ? (
-            <span className="tabular-nums">({activeFilterCount})</span>
-          ) : null}
-          <HugeiconsIcon
-            icon={ChevronDownIcon}
-            strokeWidth={2}
-            className={cn(
-              "size-4 transition-transform",
-              advancedOpen && "rotate-180"
-            )}
-          />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-3">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <InputGroup className="flex-1 bg-card/90">
-              <InputGroupAddon align="inline-start">
-                <span className="text-xs">Location</span>
-              </InputGroupAddon>
-              <InputGroupInput
-                type="search"
-                placeholder="San Francisco"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                autoComplete="off"
-                aria-label="Filter by location"
+            Job description
+          </Toggle>
+        </div>
+      ) : null}
+
+      {mode === "jd" && canMatchJd ? (
+        <div className="space-y-3">
+          <Field>
+            <FieldTitle>
+              <label htmlFor="jd-search-text">
+                Paste a job description to rank developers
+              </label>
+            </FieldTitle>
+            <Textarea
+              id="jd-search-text"
+              value={jdText}
+              onChange={(e) => setJdText(e.target.value)}
+              placeholder="Senior Backend Engineer — Go, PostgreSQL, Kubernetes…"
+              rows={5}
+              className="bg-card/90"
+            />
+            <FieldDescription>
+              Parsed locally, then ranked against your favorites, any pasted
+              logins, and a JD-constrained GitHub search.
+            </FieldDescription>
+          </Field>
+          <InputGroup className="bg-card/90">
+            <InputGroupAddon align="inline-start">
+              <span className="text-xs">Include logins</span>
+            </InputGroupAddon>
+            <InputGroupInput
+              type="search"
+              placeholder="octocat, sindresorhus (optional)"
+              value={devs}
+              onChange={(e) => setDevs(e.target.value)}
+              autoComplete="off"
+              aria-label="Extra candidate logins to include"
+            />
+          </InputGroup>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button type="submit" size="sm" disabled={!jdText.trim()}>
+              <HugeiconsIcon
+                icon={Briefcase01Icon}
+                strokeWidth={2}
+                className="size-4"
               />
-            </InputGroup>
-            <InputGroup className="flex-1 bg-card/90">
-              <InputGroupAddon align="inline-start">
-                <span className="text-xs">Language</span>
-              </InputGroupAddon>
-              <InputGroupInput
-                type="search"
-                placeholder="TypeScript"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                autoComplete="off"
-                aria-label="Filter by language"
-              />
-            </InputGroup>
-            <InputGroup className="bg-card/90 sm:w-44">
-              <InputGroupAddon align="inline-start">
-                <span className="text-xs">Min repos</span>
-              </InputGroupAddon>
-              <InputGroupInput
-                type="number"
-                placeholder="0"
-                value={reposMin}
-                onChange={(e) => setReposMin(e.target.value.replace(/\D/g, ""))}
-                autoComplete="off"
-                aria-label="Minimum number of repositories"
-              />
-            </InputGroup>
-            <Popover open={dateOpen} onOpenChange={setDateOpen}>
-              <PopoverTrigger
+              Rank candidates
+            </Button>
+            <Tooltip>
+              <TooltipTrigger
                 render={(props) => (
                   <Button
                     {...props}
                     type="button"
                     variant="outline"
-                    className="justify-start gap-2 font-normal"
+                    size="sm"
+                    onClick={() => setMode("devs")}
                   />
                 )}
               >
+                Back to developer search
+              </TooltipTrigger>
+              <TooltipContent>
+                Switch back to searching developers by name and filters.
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+      ) : (
+        <>
+          <label htmlFor="developer-search" className="text-sm font-medium">
+            Search developers
+          </label>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <InputGroup className="flex-1 bg-card/90">
+              <InputGroupAddon align="inline-start">
                 <HugeiconsIcon
-                  icon={Calendar03Icon}
+                  icon={Search01Icon}
                   strokeWidth={2}
                   className="size-4"
                 />
-                {joinedAfter ? formatLabel(joinedAfter) : "Joined after"}
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={joinedAfter ? new Date(joinedAfter) : undefined}
-                  onSelect={(date) => {
-                    setJoinedAfter(date ? format(date, "yyyy-MM-dd") : "")
-                    setDateOpen(false)
-                  }}
-                  disabled={{ after: new Date() }}
+              </InputGroupAddon>
+              <InputGroupInput
+                id="developer-search"
+                name="q"
+                type="search"
+                placeholder="Username, name, or keywordGǪ"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                autoFocus={autoFocus}
+                autoComplete="off"
+              />
+            </InputGroup>
+            <Button type="submit" className="shrink-0">
+              Search
+            </Button>
+          </div>
+
+          <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
+            <CollapsibleTrigger
+              render={(props) => (
+                <Button
+                  {...props}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground"
                 />
-                {joinedAfter ? (
-                  <div className="border-t p-2">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="w-full"
-                      onClick={() => {
-                        setJoinedAfter("")
+              )}
+            >
+              <HugeiconsIcon
+                icon={FilterIcon}
+                strokeWidth={2}
+                className="size-4"
+              />
+              Advanced filters
+              {activeFilterCount > 0 ? (
+                <span className="tabular-nums">({activeFilterCount})</span>
+              ) : null}
+              <HugeiconsIcon
+                icon={ChevronDownIcon}
+                strokeWidth={2}
+                className={cn(
+                  "size-4 transition-transform",
+                  advancedOpen && "rotate-180"
+                )}
+              />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-3">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <InputGroup className="flex-1 bg-card/90">
+                  <InputGroupAddon align="inline-start">
+                    <span className="text-xs">Location</span>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    type="search"
+                    placeholder="San Francisco"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    autoComplete="off"
+                    aria-label="Filter by location"
+                  />
+                </InputGroup>
+                <InputGroup className="flex-1 bg-card/90">
+                  <InputGroupAddon align="inline-start">
+                    <span className="text-xs">Language</span>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    type="search"
+                    placeholder="TypeScript"
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    autoComplete="off"
+                    aria-label="Filter by language"
+                  />
+                </InputGroup>
+                <InputGroup className="bg-card/90 sm:w-44">
+                  <InputGroupAddon align="inline-start">
+                    <span className="text-xs">Min repos</span>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    type="number"
+                    placeholder="0"
+                    value={reposMin}
+                    onChange={(e) =>
+                      setReposMin(e.target.value.replace(/\D/g, ""))
+                    }
+                    autoComplete="off"
+                    aria-label="Minimum number of repositories"
+                  />
+                </InputGroup>
+                <Popover open={dateOpen} onOpenChange={setDateOpen}>
+                  <PopoverTrigger
+                    render={(props) => (
+                      <Button
+                        {...props}
+                        type="button"
+                        variant="outline"
+                        className="justify-start gap-2 font-normal"
+                      />
+                    )}
+                  >
+                    <HugeiconsIcon
+                      icon={Calendar03Icon}
+                      strokeWidth={2}
+                      className="size-4"
+                    />
+                    {joinedAfter ? formatLabel(joinedAfter) : "Joined after"}
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={joinedAfter ? new Date(joinedAfter) : undefined}
+                      onSelect={(date) => {
+                        setJoinedAfter(date ? format(date, "yyyy-MM-dd") : "")
                         setDateOpen(false)
                       }}
-                    >
-                      Clear date
-                    </Button>
-                  </div>
-                ) : null}
-              </PopoverContent>
-            </Popover>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+                      disabled={{ after: new Date() }}
+                    />
+                    {joinedAfter ? (
+                      <div className="border-t p-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            setJoinedAfter("")
+                            setDateOpen(false)
+                          }}
+                        >
+                          Clear date
+                        </Button>
+                      </div>
+                    ) : null}
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </>
+      )}
     </form>
   )
 }

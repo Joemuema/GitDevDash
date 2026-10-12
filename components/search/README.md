@@ -10,7 +10,9 @@ filter chips, cards, sort and pagination.
   (Magic UI). Theme-aware, since the canvas colour can't be `currentColor`.
 - `search-form.tsx` — Query `InputGroup` + `Collapsible` advanced filters
   (language, location, min repos) + `Popover` + `Calendar` joined-after
-  date. Submits via `searchUrl` (`lib/search/params.ts`).
+  date. Submits via `searchUrl` (`lib/search/params.ts`). Hirers also get a
+  Developers/JD mode toggle: JD mode pastes the description + optional
+  devs/location and pushes `?jd=&devs=&loc=` to `/hire` (Step 9).
 - `search-context-bar.tsx` / `search-sort-select.tsx` — Result count and
   sort `DropdownMenu` (relevance, followers, repos, joined) that patches
   the URL while preserving filters.

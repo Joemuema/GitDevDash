@@ -22,21 +22,33 @@ resume-upload signals later.
 - [x] **Step 3 — Profile match card.** `JdInput` + `MatchCard` on the
       developer page behind a shareable `?jd=` param; meter + anatomy bars +
       confidence + human-decision disclaimer. Doubles as the Step 4 toggle target.
-- [x] **Step 4 — `/match` batch shortlist.** JD intake, ranked results,
-      compare table, human-decision disclaimer.
+- [x] **Step 4 — Batch shortlist (now `/hire`).** JD intake, ranked
+      results, compare table, human-decision disclaimer. Step 9 re-homed it
+      under the hirer workspace; legacy `/match` redirects to `/hire`
+      preserving query params.
 - [x] **Step 5 — Tips panel.** `TipsPanel` (`Item` + `Tabs` + `Badge`)
-      on the Step 3 developer view and for the top-ranked Step 4 candidate.
+      on the Step 3 developer view and for the top-ranked batch candidate.
 - [x] **Step 6 — Saved JDs, share/export, gating.** `SavedJdsProvider` +
       `SavedJdsPanel` (browser-local saved roles), `MatchShareActions` (free
       copy-link + account-gated CSV via `batchResultToCsv`), anonymous share
       preserved.
+- [x] **Step 7 — Docs sweep + verification.** READMEs, full gates green.
+- [x] **Step 8 — Roles foundation.** `role` on the user store + session,
+      `setRole` action, `requireRole`/`<RoleGate>`, role picker at `/welcome`,
+      guarded `/hire` + `/grow` subtrees, role-aware sidebar, Settings
+      interface switcher.
+- [x] **Step 9 — Hirer JD search + ranking.** `SearchForm` Developers/JD mode
+      toggle (hirers only) pushing `?jd=&devs=&loc=` to `/hire`;
+      `lib/hire/jd-pool.ts` assembles pasted logins first, tops up from a
+      JD-constrained GitHub search (`searchDegraded` fallback); the untouched
+      Step 4 `batchMatchDevelopers` scores into `MatchShortlist`. Favorites
+      merge client-side via intake prefill.
 
 ## Current step
 
-**Steps 1–8 DONE.** Engine → deep scan → profile card →
-batch shortlist → tips panel → saved JDs/share/export/gating →
-docs sweep → **roles foundation** (store `role`, `setRole` action,
-`requireRole` + `RoleGate`, `/welcome` picker, `/hire` + `/grow` guarded
-subtrees, role-aware sidebar, Settings interface switcher).
+**Steps 1-9 DONE.** Engine -> deep scan -> profile card ->
+batch shortlist -> tips panel -> saved JDs/share/export/gating ->
+docs sweep -> roles foundation -> **hirer JD search + ranking** (SearchForm JD mode,
+assembleJdPool, searchDegraded fallback, favorites prefill).
 Remaining, all deferred by decision: LLM JD-parser reminder, LLM
 re-ranker seam, private-repo/resume signals, cross-device sync.
