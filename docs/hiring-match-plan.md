@@ -50,13 +50,19 @@ resume-upload signals later.
       Merit column on the shortlist, transposed `CompareTable`, and the
       interview-handoff section (`ShortlistSaver` + `ShortlistsPanel`) on
       `/hire`.
+- [x] **Step 11 — Demand + impressions.** `lib/grow/demand.ts` (anonymized
+      per-JD language/framework counts, fed fire-and-forget from `/hire`) +
+      `lib/grow/impressions.ts` (one view per hirer/dev/day, 90-day window,
+      counts only); `/grow` renders `DemandRadar`, `ViewsPanel`, and
+      `CoverageGaps` (own mix via `?gh=login`). Developer profiles record a
+      hirer impression per visit.
 
 ## Current step
 
-**Steps 1-10 DONE.** Engine -> deep scan -> profile card ->
+**Steps 1-11 DONE.** Engine -> deep scan -> profile card ->
 batch shortlist -> tips panel -> saved JDs/share/export/gating ->
 docs sweep -> roles foundation -> hirer JD search + ranking ->
-**merit + shortlists + compare** (endorsements, named shortlists,
-side-by-side compare, interview handoff).
+merit + shortlists + compare -> **demand + impressions** (radar,
+view counts, coverage gaps on `/grow`).
 Remaining, all deferred by decision: LLM JD-parser reminder, LLM
 re-ranker seam, private-repo/resume signals, cross-device sync.

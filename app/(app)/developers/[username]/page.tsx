@@ -16,6 +16,8 @@ import { getUserLanguageOverview } from "@/lib/github/languages"
 import { listUserRepos, sortReposForFeatured } from "@/lib/github/repos"
 import { deepScanDeveloper } from "@/lib/match/deep-scan"
 import { parseJdParam } from "@/lib/match/jd-param"
+import { getCurrentUser } from "@/lib/auth/dal"
+import { recordImpression } from "@/lib/grow/impressions"
 import { routes } from "@/lib/routes"
 import type {
   DevActivity,
@@ -91,6 +93,20 @@ export default async function DeveloperPage({
   const match = jd
     ? await deepScanDeveloper(username, jd.signal).catch(() => null)
     : null
+
+  // Step 11: one impression per hirer/dev/day (viewer id is a dedupe key
+  // only — developers see counts, never identities). Anonymous and
+  // developer-role visits are not counted. Fire-and-forget.
+  const viewer = await getCurrentUser().catch(() => null)
+  if (viewer?.role === "hirer") {
+    void recordImpression({
+      viewerId: viewer.id,
+      login: username,
+      tags: jd
+        ? [...jd.signal.requiredLanguages, ...jd.signal.requiredFrameworks]
+        : [],
+    })
+  }
 
   return (
     <PageContainer className="space-y-8">

@@ -9,12 +9,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { PageContainer } from "@/components/layout/page-container"
 import { PageSection } from "@/components/layout/page-section"
 import { requireRole } from "@/lib/auth/require-role"
-import { assembleJdPool } from "@/lib/hire/jd-pool"
 import { getMyShortlists } from "@/lib/hire/actions"
 import {
   getEndorsementCounts,
   getOwnEndorsements,
 } from "@/lib/hire/endorsements"
+import { assembleJdPool } from "@/lib/hire/jd-pool"
+import { recordDemand } from "@/lib/grow/demand"
 import {
   batchMatchDevelopers,
   parseBatchMatchParams,
@@ -52,6 +53,11 @@ export default async function HirePage({ searchParams }: HirePageProps) {
     signal && jd
       ? await assembleJdPool(signal, pastedLogins, 5, locOverride || undefined)
       : null
+  // Step 11: feed the anonymized demand radar (counts only, never the JD
+  // text or the hirer). Fire-and-forget — results must never wait on it.
+  if (signal) {
+    void recordDemand(signal.requiredLanguages, signal.requiredFrameworks)
+  }
   const batch =
     signal && pool && pool.logins.length > 0
       ? await batchMatchDevelopers(pool.logins, signal).catch(() => null)
