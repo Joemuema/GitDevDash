@@ -3,6 +3,7 @@ import { DemandRadar } from "@/components/grow/demand-radar"
 import { PeerCompare } from "@/components/grow/peer-compare"
 import { SeoChecklist } from "@/components/grow/seo-checklist"
 import { ViewsPanel } from "@/components/grow/views-panel"
+import { TipsPanel } from "@/components/match/tips-panel"
 import { PageContainer } from "@/components/layout/page-container"
 import { PageSection } from "@/components/layout/page-section"
 import {
@@ -20,6 +21,7 @@ import { getUser } from "@/lib/github/users"
 import { getDemandSnapshot } from "@/lib/grow/demand"
 import { getImpressionSummary } from "@/lib/grow/impressions"
 import { buildPeerCohort, ownPeerStat } from "@/lib/grow/peers"
+import { scanGeneralTips } from "@/lib/grow/portfolio-tips"
 import { scoreSeoProfile } from "@/lib/grow/seo"
 import { fingerprintRepoTree } from "@/lib/match/stack"
 
@@ -107,7 +109,7 @@ export default async function GrowPage({
     ...demand.languages.map((l) => l.name),
     ...demand.frameworks.map((f) => f.name),
   ]
-  const [ownLanguages, seo, peers] = await Promise.all([
+  const [ownLanguages, seo, peers, portfolio] = await Promise.all([
     githubLogin
       ? getUserLanguageOverview(githubLogin)
           .then((result) => result.languages)
@@ -118,6 +120,9 @@ export default async function GrowPage({
       : Promise.resolve(null),
     githubLogin
       ? buildPeers(githubLogin).catch(() => null)
+      : Promise.resolve(null),
+    githubLogin
+      ? scanGeneralTips(githubLogin).catch(() => null)
       : Promise.resolve(null),
   ])
   // Views are keyed by GitHub login too — without a linked profile there is
@@ -239,13 +244,21 @@ export default async function GrowPage({
       </PageSection>
       <PageSection
         title="Repo tailoring tips"
-        description="Concrete fixes that raise your match scores."
+        description="Portfolio health scan — README, license, freshness, activity. Runs without a job description."
       >
         <Card>
           <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">
-              The tips panel moves here in Step 13.
-            </p>
+            {portfolio ? (
+              <TipsPanel login={githubLogin} tips={portfolio.match.tips} />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Link your GitHub profile with{" "}
+                <code className="rounded bg-muted px-1 font-mono text-xs">
+                  /grow?gh=your-login
+                </code>{" "}
+                to scan your repos for quick wins.
+              </p>
+            )}
           </CardContent>
         </Card>
       </PageSection>

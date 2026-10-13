@@ -22,6 +22,11 @@ anonymized aggregates — no hirer identities, no JD text, ever.
 - `peers.ts` — Step 12 peer cohort compare: `buildPeerCohort` (same top
   language, ±50% follower band, up to 6 peers, `thin` flag below 3),
   `ownPeerStat` shapes your row identically. Public signals only.
+- `portfolio-tips.ts` — Step 13 JD-free portfolio scan (`scanGeneralTips`):
+  mirrors `deepScanDeveloper`'s two-phase shape but scores repos with
+  `scoreRepoHeuristic` against an empty signal, so the universal hygiene tips
+  (README, license, stale flagship, activity, thin portfolio) fire while the
+  JD-specific ones no-op. Reuses the Step 1 engine verbatim — no fork.
 
 Both stores use atomic temp-file writes + a promise-chain mutex (the pattern
 from the account and hire stores) and are git-ignored.

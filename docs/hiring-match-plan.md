@@ -64,13 +64,19 @@ resume-upload signals later.
       `PeerCompare` ("you vs median"), all failure-isolated with link-profile
       empty states.
 
+- [x] **Step 13 — Tips re-homed.** `lib/grow/portfolio-tips.ts`
+      (`scanGeneralTips`): JD-free scan reusing the Step 1 engine verbatim
+      (empty signal → hygiene tips fire, JD tips no-op). `/grow` renders
+      `TipsPanel` with general portfolio tips; the developer profile keeps
+      JD-specific tips only.
+
 ## Current step
 
-**Steps 1-12 DONE.** Engine -> deep scan -> profile card ->
+**Steps 1-13 DONE.** Engine -> deep scan -> profile card ->
 batch shortlist -> tips panel -> saved JDs/share/export/gating ->
 docs sweep -> roles foundation -> hirer JD search + ranking ->
 merit + shortlists + compare -> demand + impressions ->
-**SEO checklist + peer compare** (discoverability scoring, cohort
-medians on `/grow`).
+SEO checklist + peer compare -> **tips re-homed** (JD-free
+portfolio scan, `TipsPanel` on `/grow`).
 Remaining, all deferred by decision: LLM JD-parser reminder, LLM
 re-ranker seam, private-repo/resume signals, cross-device sync.
