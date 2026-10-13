@@ -4,6 +4,7 @@ import { PeerCompare } from "@/components/grow/peer-compare"
 import { SeoChecklist } from "@/components/grow/seo-checklist"
 import { ViewsPanel } from "@/components/grow/views-panel"
 import { TipsPanel } from "@/components/match/tips-panel"
+import { PlanTable } from "@/components/billing/plan-table"
 import { PageContainer } from "@/components/layout/page-container"
 import { PageSection } from "@/components/layout/page-section"
 import {
@@ -23,6 +24,7 @@ import { getImpressionSummary } from "@/lib/grow/impressions"
 import { buildPeerCohort, ownPeerStat } from "@/lib/grow/peers"
 import { scanGeneralTips } from "@/lib/grow/portfolio-tips"
 import { scoreSeoProfile } from "@/lib/grow/seo"
+import { DEVELOPER_PLAN } from "@/lib/billing/plans"
 import { fingerprintRepoTree } from "@/lib/match/stack"
 
 /**
@@ -261,6 +263,16 @@ export default async function GrowPage({
             )}
           </CardContent>
         </Card>
+      </PageSection>
+      <PageSection
+        title="Developer plan"
+        description="What's free today and what Pro unlocks when billing goes live."
+      >
+        <PlanTable
+          title="Developer plan"
+          description="Visibility and proof — the tips themselves stay free."
+          features={DEVELOPER_PLAN}
+        />
       </PageSection>
     </PageContainer>
   )

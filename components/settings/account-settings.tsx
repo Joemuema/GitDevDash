@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { ProBadge } from "@/components/billing/pro-badge"
 import {
   Card,
   CardContent,
@@ -223,8 +224,8 @@ function ProfileSummaryCard({
                 icon={provider === "google" ? GoogleIcon : Mail01Icon}
                 strokeWidth={2}
               />
-              {provider === "google" ? "Google account" : "Email account"}
             </Badge>
+            <ProBadge />
             <span className="text-xs text-muted-foreground">
               Joined {formatJoined(createdAt)}
             </span>

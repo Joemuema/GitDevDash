@@ -33,6 +33,12 @@ export type StoredUser = {
    */
   role: UserRole | null
   roleUpdatedAt: string | null
+  /**
+   * Billing stub. `false` for every account until real billing lands.
+   * Old records predate the field, so readers must treat a missing value
+   * as `false` (see `toSessionUser`).
+   */
+  isPro: boolean
   /** Absent for Google-only accounts, which never set a local password. */
   passwordHash: string | null
   /** Bumped on password change to invalidate other outstanding sessions. */
@@ -122,6 +128,8 @@ export function toSessionUser(user: StoredUser): SessionUser {
     provider: user.provider,
     image: user.image,
     role: user.role,
+    // Old records predate `isPro` — coerce a missing value to the free tier.
+    isPro: user.isPro === true,
     createdAt: user.createdAt,
   }
 }
@@ -179,6 +187,9 @@ export async function createUser(
       image: input.image ?? null,
       role: input.role ?? null,
       roleUpdatedAt: input.role ? now : null,
+      // Free tier until real billing exists. Never trust client input here —
+      // `CreateUserInput` has no `isPro` field by design.
+      isPro: false,
       passwordHash: input.passwordHash ?? null,
       sessionVersion: 1,
       createdAt: now,

@@ -28,6 +28,12 @@ export type SessionUser = {
   provider: AuthProvider
   image: string | null
   role: UserRole | null
+  /**
+   * Billing stub. Always `false` until real billing lands — no checkout,
+   * webhook, or upgrade path exists yet. Plumbed through now so paywall copy
+   * can branch on it without a later migration.
+   */
+  isPro: boolean
   createdAt: string
 }
 

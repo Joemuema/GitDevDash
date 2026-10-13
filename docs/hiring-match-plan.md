@@ -70,13 +70,21 @@ resume-upload signals later.
       `TipsPanel` with general portfolio tips; the developer profile keeps
       JD-specific tips only.
 
+- [x] **Step 14 — Pro flags + docs sweep.** `isPro` stub on the user store
+      + session (always `false`, pre-role records coerce to free);
+      client-safe `lib/billing/plans.ts` (`HIRER_PLAN` / `DEVELOPER_PLAN`
+      copy + `canUsePro()`); `ProBadge` in Settings → Account, `PlanTable`
+      on `/hire` and `/grow`; CSV/ATS export flipped from account-gated to
+      Pro-gated with honest locked copy (share links stay free). No
+      checkout, webhook, or upgrade path — billing is explicitly not live.
+
 ## Current step
 
-**Steps 1-13 DONE.** Engine -> deep scan -> profile card ->
+**Steps 1-14 DONE.** Engine -> deep scan -> profile card ->
 batch shortlist -> tips panel -> saved JDs/share/export/gating ->
 docs sweep -> roles foundation -> hirer JD search + ranking ->
 merit + shortlists + compare -> demand + impressions ->
-SEO checklist + peer compare -> **tips re-homed** (JD-free
-portfolio scan, `TipsPanel` on `/grow`).
+SEO checklist + peer compare -> tips re-homed -> **Pro stub +
+paywall copy + final docs sweep**.
 Remaining, all deferred by decision: LLM JD-parser reminder, LLM
 re-ranker seam, private-repo/resume signals, cross-device sync.

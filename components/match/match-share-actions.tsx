@@ -11,13 +11,15 @@ import {
 import { useAuth } from "@/hooks/use-auth"
 import { batchResultToCsv } from "@/lib/match/export-csv"
 import type { BatchMatchResult } from "@/lib/match/match-batch"
+import { canUsePro } from "@/lib/billing/plans"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Download01Icon, Link01Icon } from "@hugeicons/core-free-icons"
 
 export function MatchShareActions({ batch }: { batch: BatchMatchResult }) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const [copied, setCopied] = useState(false)
   const [denied, setDenied] = useState(false)
+  const isPro = canUsePro(user)
 
   function copyShareLink() {
     // The URL already encodes JD + logins, so it round-trips anywhere.
@@ -32,9 +34,10 @@ export function MatchShareActions({ batch }: { batch: BatchMatchResult }) {
   }
 
   function downloadCsv() {
-    // CSV export is an account feature: anonymous visitors get a nudge to
-    // sign in (their data stays local until they do).
-    if (!isAuthenticated) {
+    // CSV export is a Pro feature: anonymous visitors get a nudge to sign in,
+    // free accounts get the honest Pro message. Copy-link stays free so
+    // shortlists remain shareable by everyone.
+    if (!isAuthenticated || !isPro) {
       setDenied(true)
       window.setTimeout(() => setDenied(false), 4000)
       return
@@ -89,16 +92,17 @@ export function MatchShareActions({ batch }: { batch: BatchMatchResult }) {
         />
         <TooltipContent>
           <p>
-            {isAuthenticated
+            {isPro
               ? "Download ranked results for your ATS"
-              : "Sign in to export — sharing stays free for everyone"}
+              : "Pro feature — copy-link sharing stays free for everyone"}
           </p>
         </TooltipContent>
       </Tooltip>
       {denied ? (
         <p className="text-xs text-muted-foreground" role="status">
-          CSV export needs an account — sign in from the header, then retry.
-          Your shortlist is unaffected.
+          {!isAuthenticated
+            ? "CSV export needs an account — sign in from the header, then retry. Your shortlist is unaffected."
+            : "CSV / ATS export is a Pro feature. Billing isn't live yet, so it stays locked for every account."}
         </p>
       ) : null}
     </div>

@@ -5,6 +5,7 @@ import { CompareTable } from "@/components/match/compare-table"
 import { SavedJdsPanel } from "@/components/match/saved-jds-panel"
 import { ShortlistSaver } from "@/components/match/shortlist-saver"
 import { ShortlistsPanel } from "@/components/match/shortlists-panel"
+import { PlanTable } from "@/components/billing/plan-table"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { PageContainer } from "@/components/layout/page-container"
 import { PageSection } from "@/components/layout/page-section"
@@ -21,6 +22,7 @@ import {
   parseBatchMatchParams,
 } from "@/lib/match/match-batch"
 import { parseJdParam } from "@/lib/match/jd-param"
+import { HIRER_PLAN } from "@/lib/billing/plans"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Alert02Icon } from "@hugeicons/core-free-icons"
 
@@ -164,6 +166,16 @@ export default async function HirePage({ searchParams }: HirePageProps) {
           <ShortlistsPanel shortlists={myShortlists} />
         </PageSection>
       )}
+      <PageSection
+        title="Hirer plan"
+        description="What's free today and what Pro unlocks when billing goes live."
+      >
+        <PlanTable
+          title="Hirer plan"
+          description="Scale, evidence depth, and handoff artifacts — the score itself stays free."
+          features={HIRER_PLAN}
+        />
+      </PageSection>
     </PageContainer>
   )
 }
