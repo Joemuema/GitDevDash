@@ -16,6 +16,12 @@ anonymized aggregates — no hirer identities, no JD text, ever.
   hirer/dev/day — refreshes can't inflate it), keeps 90 days per login.
   `getImpressionSummary` returns trailing-30-day daily buckets + 7-day total
   - top JD tags. Viewer ids are dedupe keys only, never surfaced.
+- `seo.ts` — Step 12 pure discoverability scorer (`scoreSeoProfile`): bio,
+  location, repo count, README/LICENSE presence, demand-keyword coverage
+  (word-boundary matching, min-3 target) → pass/fail checks with fixes.
+- `peers.ts` — Step 12 peer cohort compare: `buildPeerCohort` (same top
+  language, ±50% follower band, up to 6 peers, `thin` flag below 3),
+  `ownPeerStat` shapes your row identically. Public signals only.
 
 Both stores use atomic temp-file writes + a promise-chain mutex (the pattern
 from the account and hire stores) and are git-ignored.

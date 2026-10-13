@@ -15,6 +15,12 @@ props from the server page — no client fetching.
   don't store a GitHub login yet) set against demand: covered count plus up
   to 6 missing-skill `Item`s with request counts. Unglinked state shows the
   `?gh=` hint; pre-demand state explains the wait.
+- `seo-checklist.tsx` — Step 12: `scoreSeoProfile` output as an `Item`
+  checklist. Passed checks collapse to a `passed/total` count; failures render
+  with detail + fix inline.
+- `peer-compare.tsx` — Step 12: "you vs median" `Table` (followers, repos,
+  top-repo stars, pushes), your cell bolded when at/above median, cohort
+  logins as a footnote. Dashed empty state when `thin`.
 
 ## Connections
 

@@ -1,5 +1,7 @@
 import { CoverageGaps } from "@/components/grow/coverage-gaps"
 import { DemandRadar } from "@/components/grow/demand-radar"
+import { PeerCompare } from "@/components/grow/peer-compare"
+import { SeoChecklist } from "@/components/grow/seo-checklist"
 import { ViewsPanel } from "@/components/grow/views-panel"
 import { PageContainer } from "@/components/layout/page-container"
 import { PageSection } from "@/components/layout/page-section"
@@ -12,8 +14,73 @@ import {
 } from "@/components/ui/card"
 import { requireRole } from "@/lib/auth/require-role"
 import { getUserLanguageOverview } from "@/lib/github/languages"
+import { getRepository, listUserRepos } from "@/lib/github/repos"
+import { getRepoTree } from "@/lib/github/tree"
+import { getUser } from "@/lib/github/users"
 import { getDemandSnapshot } from "@/lib/grow/demand"
 import { getImpressionSummary } from "@/lib/grow/impressions"
+import { buildPeerCohort, ownPeerStat } from "@/lib/grow/peers"
+import { scoreSeoProfile } from "@/lib/grow/seo"
+import { fingerprintRepoTree } from "@/lib/match/stack"
+
+/**
+ * Gathers the SEO inputs for a linked GitHub profile: the user record, the
+ * top-3 non-fork repo descriptions, and README/LICENSE presence from their
+ * file trees (via the same tree fingerprints the match engine uses).
+ */
+async function buildSeoInput(
+  githubLogin: string,
+  demandTerms: string[] | null
+) {
+  const user = await getUser(githubLogin)
+  const repos = await listUserRepos(githubLogin, "updated").catch(() => [])
+  const top = repos.filter((r) => !r.fork).slice(0, 3)
+  const flags = await Promise.all(
+    top.map(async (repo) => {
+      try {
+        const detail = await getRepository(githubLogin, repo.name)
+        const tree = await getRepoTree(
+          githubLogin,
+          repo.name,
+          detail.defaultBranch
+        )
+          .then((result) => result.files)
+          .catch(() => [])
+        const stack = fingerprintRepoTree(tree)
+        return {
+          description: repo.description ?? "",
+          hasReadme: stack.hasReadme,
+          hasLicense: stack.hasLicense || detail.license !== null,
+        }
+      } catch {
+        return {
+          description: repo.description ?? "",
+          hasReadme: false,
+          hasLicense: false,
+        }
+      }
+    })
+  )
+  return scoreSeoProfile({
+    user,
+    repoDescriptions: flags.map((f) => f.description),
+    hasReadme: flags.some((f) => f.hasReadme),
+    hasLicense: flags.some((f) => f.hasLicense),
+    demandTerms: demandTerms ?? [],
+  })
+}
+
+async function buildPeers(githubLogin: string) {
+  const user = await getUser(githubLogin)
+  const languages = await getUserLanguageOverview(githubLogin)
+    .then((result) => result.languages)
+    .catch(() => [])
+  const [cohort, own] = await Promise.all([
+    buildPeerCohort(user, languages[0]?.name ?? null),
+    ownPeerStat(user),
+  ])
+  return { cohort, own, topLanguage: languages[0]?.name ?? null }
+}
 
 /**
  * Step 11 — developer demand radar + view counts.
@@ -35,13 +102,23 @@ export default async function GrowPage({
   const ghRaw = raw.gh
   const githubLogin = (Array.isArray(ghRaw) ? ghRaw[0] : (ghRaw ?? "")).trim()
 
-  const [demand, ownLanguages] = await Promise.all([
-    getDemandSnapshot(10),
+  const demand = await getDemandSnapshot(10)
+  const demandTerms = [
+    ...demand.languages.map((l) => l.name),
+    ...demand.frameworks.map((f) => f.name),
+  ]
+  const [ownLanguages, seo, peers] = await Promise.all([
     githubLogin
       ? getUserLanguageOverview(githubLogin)
           .then((result) => result.languages)
           .catch(() => [])
       : Promise.resolve([]),
+    githubLogin
+      ? buildSeoInput(githubLogin, demandTerms).catch(() => null)
+      : Promise.resolve(null),
+    githubLogin
+      ? buildPeers(githubLogin).catch(() => null)
+      : Promise.resolve(null),
   ])
   // Views are keyed by GitHub login too — without a linked profile there is
   // nothing to look up yet.
@@ -109,6 +186,54 @@ export default async function GrowPage({
               demandFrameworks={demand.frameworks}
               githubLogin={githubLogin || null}
             />
+          </CardContent>
+        </Card>
+      </PageSection>
+      <PageSection
+        title="Discoverability checklist"
+        description="Profile signals hirers filter on — bio, location, repos, README, license, keywords."
+      >
+        <Card>
+          <CardContent className="pt-6">
+            {seo ? (
+              <SeoChecklist
+                checks={seo.checks}
+                passed={seo.passed}
+                total={seo.total}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Link your GitHub profile with{" "}
+                <code className="rounded bg-muted px-1 font-mono text-xs">
+                  /grow?gh=your-login
+                </code>{" "}
+                to score your discoverability.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </PageSection>
+      <PageSection
+        title="You vs peers"
+        description="Public-signal medians for developers in your language and follower band."
+      >
+        <Card>
+          <CardContent className="pt-6">
+            {peers ? (
+              <PeerCompare
+                own={peers.own}
+                cohort={peers.cohort}
+                topLanguage={peers.topLanguage}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Link your GitHub profile with{" "}
+                <code className="rounded bg-muted px-1 font-mono text-xs">
+                  /grow?gh=your-login
+                </code>{" "}
+                to compare against similar developers.
+              </p>
+            )}
           </CardContent>
         </Card>
       </PageSection>

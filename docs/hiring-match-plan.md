@@ -57,12 +57,20 @@ resume-upload signals later.
       `CoverageGaps` (own mix via `?gh=login`). Developer profiles record a
       hirer impression per visit.
 
+- [x] **Step 12 — SEO + peers.** `lib/grow/seo.ts` (`scoreSeoProfile`: bio,
+      location, repos, README/LICENSE, demand keywords) + `lib/grow/peers.ts`
+      (`buildPeerCohort`: same top language, ±50% follower band, up to 6,
+      `thin` < 3; `ownPeerStat`); `/grow` renders `SeoChecklist` and
+      `PeerCompare` ("you vs median"), all failure-isolated with link-profile
+      empty states.
+
 ## Current step
 
-**Steps 1-11 DONE.** Engine -> deep scan -> profile card ->
+**Steps 1-12 DONE.** Engine -> deep scan -> profile card ->
 batch shortlist -> tips panel -> saved JDs/share/export/gating ->
 docs sweep -> roles foundation -> hirer JD search + ranking ->
-merit + shortlists + compare -> **demand + impressions** (radar,
-view counts, coverage gaps on `/grow`).
+merit + shortlists + compare -> demand + impressions ->
+**SEO checklist + peer compare** (discoverability scoring, cohort
+medians on `/grow`).
 Remaining, all deferred by decision: LLM JD-parser reminder, LLM
 re-ranker seam, private-repo/resume signals, cross-device sync.
