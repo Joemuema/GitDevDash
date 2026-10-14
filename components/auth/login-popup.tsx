@@ -23,10 +23,7 @@ import {
 } from "@/components/ui/sheet"
 import { Switch } from "@/components/ui/switch"
 import { registerAccount, signInWithEmail } from "@/lib/auth/actions"
-import {
-  initialAuthFormState,
-  type AuthFormState,
-} from "@/lib/auth/form-state"
+import { initialAuthFormState, type AuthFormState } from "@/lib/auth/form-state"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Alert02Icon,
@@ -133,7 +130,11 @@ function StatusAlert({ state }: { state: AuthFormState }) {
         strokeWidth={2}
       />
       <AlertTitle>
-        {isError ? "Check your details" : isSuccess ? "You're signed in" : "Almost there"}
+        {isError
+          ? "Check your details"
+          : isSuccess
+            ? "You're signed in"
+            : "Almost there"}
       </AlertTitle>
       <AlertDescription>{state.message}</AlertDescription>
     </Alert>
@@ -214,9 +215,10 @@ function EmailSignInCard({ onSignedIn }: { onSignedIn: () => void }) {
               <HugeiconsIcon icon={InformationCircleIcon} strokeWidth={2} />
               <AlertTitle>Password resets aren&apos;t wired up yet</AlertTitle>
               <AlertDescription>
-                Emailing a reset link needs a mail provider, which this deployment
-                doesn&apos;t have. Create a new account instead, or ask whoever
-                runs this GitDevDash instance to clear the account for you.
+                Emailing a reset link needs a mail provider, which this
+                deployment doesn&apos;t have. Create a new account instead, or
+                ask whoever runs this GitDevDash instance to clear the account
+                for you.
               </AlertDescription>
             </Alert>
           ) : null}
@@ -392,5 +394,3 @@ function PasswordField({
     </InputGroup>
   )
 }
-
-

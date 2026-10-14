@@ -1,6 +1,10 @@
 import "server-only"
 
-import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto"
+import {
+  randomBytes,
+  scrypt as scryptCallback,
+  timingSafeEqual,
+} from "node:crypto"
 
 /**
  * Password hashing built on Node's `scrypt`, which is a memory-hard KDF
@@ -40,9 +44,14 @@ function deriveKey(
 export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(SALT_LENGTH)
   const key = await deriveKey(password, salt, KEY_LENGTH)
-  return [PREFIX, N, R, P, salt.toString("base64"), key.toString("base64")].join(
-    "$"
-  )
+  return [
+    PREFIX,
+    N,
+    R,
+    P,
+    salt.toString("base64"),
+    key.toString("base64"),
+  ].join("$")
 }
 
 /**

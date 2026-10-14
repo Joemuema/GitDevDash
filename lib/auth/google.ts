@@ -25,7 +25,8 @@ import {
 
 const GOOGLE_AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth"
 const GOOGLE_TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
-const GOOGLE_USERINFO_ENDPOINT = "https://openidconnect.googleapis.com/v1/userinfo"
+const GOOGLE_USERINFO_ENDPOINT =
+  "https://openidconnect.googleapis.com/v1/userinfo"
 const GOOGLE_ISSUERS = new Set([
   "https://accounts.google.com",
   "accounts.google.com",
@@ -138,9 +139,7 @@ export async function exchangeCodeForTokens(input: {
   codeVerifier: string
   redirectUri: string
   credentials: GoogleCredentials
-}): Promise<
-  { ok: true; accessToken: string } | { ok: false; detail: string }
-> {
+}): Promise<{ ok: true; accessToken: string } | { ok: false; detail: string }> {
   const body = new URLSearchParams({
     code: input.code,
     client_id: input.credentials.clientId,
@@ -165,12 +164,15 @@ export async function exchangeCodeForTokens(input: {
     }
   }
 
-  const payload = (await response.json().catch(() => ({}))) as GoogleTokenResponse
+  const payload = (await response
+    .json()
+    .catch(() => ({}))) as GoogleTokenResponse
 
   if (!response.ok || !payload.access_token) {
     return {
       ok: false,
-      detail: payload.error_description ?? payload.error ?? `HTTP ${response.status}`,
+      detail:
+        payload.error_description ?? payload.error ?? `HTTP ${response.status}`,
     }
   }
 
@@ -264,4 +266,3 @@ export async function findOrCreateGoogleUser(
 
   return { ok: true, user: created.user }
 }
-

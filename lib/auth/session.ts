@@ -66,8 +66,9 @@ function getSecretKey(): Uint8Array {
   return deriveKey(DEV_FALLBACK_SECRET)
 }
 
-function isSessionPayload(payload: JWTPayload): payload is JWTPayload &
-  Record<keyof SessionPayload, unknown> {
+function isSessionPayload(
+  payload: JWTPayload
+): payload is JWTPayload & Record<keyof SessionPayload, unknown> {
   return (
     typeof payload.sub === "string" &&
     typeof payload.email === "string" &&
@@ -75,7 +76,10 @@ function isSessionPayload(payload: JWTPayload): payload is JWTPayload &
   )
 }
 
-async function encrypt(payload: SessionPayload, expiresAt: Date): Promise<string> {
+async function encrypt(
+  payload: SessionPayload,
+  expiresAt: Date
+): Promise<string> {
   return new EncryptJWT({ email: payload.email, ver: payload.ver })
     .setProtectedHeader({ alg: "dir", enc: "A256GCM" })
     .setSubject(payload.sub)

@@ -29,15 +29,13 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
 })
 
 /** Full record (including the password hash) — for server-only account logic. */
-export const getCurrentUserRecord = cache(
-  async () => {
-    const session = await getSessionPayload()
-    if (!session) return null
+export const getCurrentUserRecord = cache(async () => {
+  const session = await getSessionPayload()
+  if (!session) return null
 
-    const user = await findUserById(session.sub)
-    if (!user) return null
-    if (user.sessionVersion !== session.ver) return null
+  const user = await findUserById(session.sub)
+  if (!user) return null
+  if (user.sessionVersion !== session.ver) return null
 
-    return user
-  }
-)
+  return user
+})
